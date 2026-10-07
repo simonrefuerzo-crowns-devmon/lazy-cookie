@@ -1,0 +1,51 @@
+[gd_resource type="Resource" script_class="RoomData" format=3 uid="uid://d1o7u72mqirc0"]
+
+[ext_resource type="Script" uid="uid://dla5ljfkdnx0w" path="res://scripts/resource/floor_space.gd" id="1_15wgq"]
+[ext_resource type="Script" uid="uid://xpcnftcgmj5p" path="res://scripts/resource/room_data.gd" id="1_edrkb"]
+[ext_resource type="Script" uid="uid://cgs1ha0arv0al" path="res://scripts/resource/wall_segment.gd" id="2_egby5"]
+[ext_resource type="Texture2D" uid="uid://hp75k7rgl5hk" path="res://assets/textures/wall_texture/tile121.png" id="2_qbham"]
+[ext_resource type="Texture2D" uid="uid://klaya42en13a" path="res://assets/textures/wall_texture/tile082.png" id="3_15wgq"]
+
+[sub_resource type="Resource" id="Resource_t1o0k"]
+script = ExtResource("1_15wgq")
+polygon = PackedVector2Array(-56, -72, 120, -72, 120, 40, 40, 96, -56, 40)
+texture = ExtResource("2_qbham")
+texture_tile_size = 32.0
+
+[sub_resource type="Resource" id="Resource_5mc5e"]
+script = ExtResource("2_egby5")
+start_point = Vector2(120, 40)
+end_point = Vector2(120, -72)
+thickness = 12.0
+line_width = 4.0
+outside_texture = ExtResource("3_15wgq")
+inside_texture = ExtResource("3_15wgq")
+outside_filler_color = Color(0.5372549, 0.4392157, 0.43137255, 1)
+inside_filler_color = Color(0.5372549, 0.4392157, 0.43137255, 1)
+
+[sub_resource type="Resource" id="Resource_qvlit"]
+script = ExtResource("2_egby5")
+start_point = Vector2(120, -72)
+end_point = Vector2(-56, -72)
+thickness = 12.0
+line_width = 4.0
+outside_texture = ExtResource("3_15wgq")
+inside_texture = ExtResource("3_15wgq")
+outside_filler_color = Color(0.5372549, 0.4392157, 0.43137255, 1)
+inside_filler_color = Color(0.5372549, 0.4392157, 0.43137255, 1)
+
+[sub_resource type="Resource" id="Resource_ah2lk"]
+script = ExtResource("2_egby5")
+start_point = Vector2(-56, -72)
+end_point = Vector2(-56, 48)
+thickness = 12.0
+line_width = 4.0
+outside_texture = ExtResource("3_15wgq")
+inside_texture = ExtResource("3_15wgq")
+outside_filler_color = Color(0.5372549, 0.4392157, 0.43137255, 1)
+inside_filler_color = Color(0.5372549, 0.4392157, 0.43137255, 1)
+
+[resource]
+script = ExtResource("1_edrkb")
+wall_segments = Array[ExtResource("2_egby5")]([SubResource("Resource_5mc5e"), SubResource("Resource_qvlit"), SubResource("Resource_ah2lk")])
+floor_spaces = Array[ExtResource("1_15wgq")]([SubResource("Resource_t1o0k")])

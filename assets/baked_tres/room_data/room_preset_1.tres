@@ -1,0 +1,164 @@
+[gd_resource type="Resource" script_class="RoomData" format=3 uid="uid://dyrpt85k10eo7"]
+
+[ext_resource type="Script" uid="uid://xpcnftcgmj5p" path="res://scripts/resource/room_data.gd" id="1_oxxt4"]
+[ext_resource type="Script" uid="uid://cgs1ha0arv0al" path="res://scripts/resource/wall_segment.gd" id="2_mdxx7"]
+[ext_resource type="Texture2D" uid="uid://b7juw727y5vvr" path="res://assets/textures/wall_texture/tile091.png" id="3_gx0ck"]
+
+[sub_resource type="Resource" id="Resource_655al"]
+script = ExtResource("2_mdxx7")
+start_point = Vector2(0, 192)
+thickness = 4.0
+line_width = 1.0
+start_cap_style = 1
+end_cap_style = 1
+outside_texture = ExtResource("3_gx0ck")
+inside_texture = ExtResource("3_gx0ck")
+outside_filler_color = Color(0.67058825, 0.6784314, 0.654902, 1)
+inside_filler_color = Color(0.6784314, 0.50980395, 0.31764707, 1)
+
+[sub_resource type="Resource" id="Resource_5mc5e"]
+script = ExtResource("2_mdxx7")
+end_point = Vector2(320, 0)
+thickness = 4.0
+line_width = 1.0
+end_cap_style = 1
+outside_texture = ExtResource("3_gx0ck")
+inside_texture = ExtResource("3_gx0ck")
+outside_filler_color = Color(0.67058825, 0.6784314, 0.654902, 1)
+inside_filler_color = Color(0.6784314, 0.50980395, 0.31764707, 1)
+
+[sub_resource type="Resource" id="Resource_qvlit"]
+script = ExtResource("2_mdxx7")
+start_point = Vector2(320, 0)
+end_point = Vector2(320, -256)
+thickness = 4.0
+line_width = 1.0
+end_cap_style = 1
+outside_texture = ExtResource("3_gx0ck")
+inside_texture = ExtResource("3_gx0ck")
+outside_filler_color = Color(0.67058825, 0.6784314, 0.654902, 1)
+inside_filler_color = Color(0.6784314, 0.50980395, 0.31764707, 1)
+
+[sub_resource type="Resource" id="Resource_ah2lk"]
+script = ExtResource("2_mdxx7")
+start_point = Vector2(320, -256)
+end_point = Vector2(256, -320)
+thickness = 4.0
+line_width = 1.0
+end_cap_style = 1
+outside_texture = ExtResource("3_gx0ck")
+inside_texture = ExtResource("3_gx0ck")
+outside_filler_color = Color(0.67058825, 0.6784314, 0.654902, 1)
+inside_filler_color = Color(0.6784314, 0.50980395, 0.31764707, 1)
+
+[sub_resource type="Resource" id="Resource_cokhf"]
+script = ExtResource("2_mdxx7")
+start_point = Vector2(256, -320)
+end_point = Vector2(80, -320)
+thickness = 4.0
+line_width = 1.0
+end_cap_style = 1
+outside_texture = ExtResource("3_gx0ck")
+inside_texture = ExtResource("3_gx0ck")
+outside_filler_color = Color(0.67058825, 0.6784314, 0.654902, 1)
+inside_filler_color = Color(0.6784314, 0.50980395, 0.31764707, 1)
+
+[sub_resource type="Resource" id="Resource_bwk4q"]
+script = ExtResource("2_mdxx7")
+start_point = Vector2(80, -320)
+end_point = Vector2(80, -368)
+thickness = 4.0
+line_width = 1.0
+end_cap_style = 1
+outside_texture = ExtResource("3_gx0ck")
+inside_texture = ExtResource("3_gx0ck")
+outside_filler_color = Color(0.67058825, 0.6784314, 0.654902, 1)
+inside_filler_color = Color(0.6784314, 0.50980395, 0.31764707, 1)
+
+[sub_resource type="Resource" id="Resource_y0e3v"]
+script = ExtResource("2_mdxx7")
+start_point = Vector2(80, -368)
+end_point = Vector2(48, -400)
+thickness = 4.0
+line_width = 1.0
+end_cap_style = 1
+outside_texture = ExtResource("3_gx0ck")
+inside_texture = ExtResource("3_gx0ck")
+outside_filler_color = Color(0.67058825, 0.6784314, 0.654902, 1)
+inside_filler_color = Color(0.6784314, 0.50980395, 0.31764707, 1)
+
+[sub_resource type="Resource" id="Resource_8k7fi"]
+script = ExtResource("2_mdxx7")
+start_point = Vector2(48, -400)
+end_point = Vector2(-256, -400)
+thickness = 4.0
+line_width = 1.0
+end_cap_style = 1
+outside_texture = ExtResource("3_gx0ck")
+inside_texture = ExtResource("3_gx0ck")
+outside_filler_color = Color(0.67058825, 0.6784314, 0.654902, 1)
+inside_filler_color = Color(0.6784314, 0.50980395, 0.31764707, 1)
+
+[sub_resource type="Resource" id="Resource_co3k0"]
+script = ExtResource("2_mdxx7")
+start_point = Vector2(-256, -400)
+end_point = Vector2(-368, -288)
+thickness = 4.0
+line_width = 1.0
+end_cap_style = 1
+outside_texture = ExtResource("3_gx0ck")
+inside_texture = ExtResource("3_gx0ck")
+outside_filler_color = Color(0.67058825, 0.6784314, 0.654902, 1)
+inside_filler_color = Color(0.6784314, 0.50980395, 0.31764707, 1)
+
+[sub_resource type="Resource" id="Resource_j765n"]
+script = ExtResource("2_mdxx7")
+start_point = Vector2(-368, -288)
+end_point = Vector2(-368, 0)
+thickness = 4.0
+line_width = 1.0
+end_cap_style = 1
+outside_texture = ExtResource("3_gx0ck")
+inside_texture = ExtResource("3_gx0ck")
+outside_filler_color = Color(0.67058825, 0.6784314, 0.654902, 1)
+inside_filler_color = Color(0.6784314, 0.50980395, 0.31764707, 1)
+
+[sub_resource type="Resource" id="Resource_t810a"]
+script = ExtResource("2_mdxx7")
+start_point = Vector2(-368, 0)
+end_point = Vector2(-272, 128)
+thickness = 4.0
+line_width = 1.0
+end_cap_style = 1
+outside_texture = ExtResource("3_gx0ck")
+inside_texture = ExtResource("3_gx0ck")
+outside_filler_color = Color(0.67058825, 0.6784314, 0.654902, 1)
+inside_filler_color = Color(0.6784314, 0.50980395, 0.31764707, 1)
+
+[sub_resource type="Resource" id="Resource_ao1ww"]
+script = ExtResource("2_mdxx7")
+start_point = Vector2(0, 192)
+end_point = Vector2(-272, 192)
+thickness = 4.0
+line_width = 1.0
+end_cap_style = 1
+outside_texture = ExtResource("3_gx0ck")
+inside_texture = ExtResource("3_gx0ck")
+outside_filler_color = Color(0.6784314, 0.50980395, 0.31764707, 1)
+inside_filler_color = Color(0.67058825, 0.6784314, 0.654902, 1)
+
+[sub_resource type="Resource" id="Resource_0at6j"]
+script = ExtResource("2_mdxx7")
+start_point = Vector2(-272, 128)
+end_point = Vector2(-272, 192)
+thickness = 4.0
+line_width = 1.0
+end_cap_style = 1
+outside_texture = ExtResource("3_gx0ck")
+inside_texture = ExtResource("3_gx0ck")
+outside_filler_color = Color(0.67058825, 0.6784314, 0.654902, 1)
+inside_filler_color = Color(0.6784314, 0.50980395, 0.31764707, 1)
+
+[resource]
+script = ExtResource("1_oxxt4")
+wall_segments = Array[ExtResource("2_mdxx7")]([SubResource("Resource_655al"), SubResource("Resource_5mc5e"), SubResource("Resource_qvlit"), SubResource("Resource_ah2lk"), SubResource("Resource_cokhf"), SubResource("Resource_bwk4q"), SubResource("Resource_y0e3v"), SubResource("Resource_8k7fi"), SubResource("Resource_co3k0"), SubResource("Resource_j765n"), SubResource("Resource_t810a"), SubResource("Resource_ao1ww"), SubResource("Resource_0at6j")])
