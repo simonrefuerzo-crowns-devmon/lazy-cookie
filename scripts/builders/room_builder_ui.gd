@@ -53,6 +53,11 @@ func build_general_context_menu() -> void:
 	ctx.context_menu.add_item("Iso Quadrant 2", 41)
 	ctx.context_menu.add_item("Iso Quadrant 3", 42)
 	ctx.context_menu.add_item("Iso Quadrant 4", 43)
+	ctx.context_menu.add_separator()
+	ctx.context_menu.add_item("Create Object Here", 60)
+	ctx.context_menu.add_item("Load Object Here", 61)
+	ctx.context_menu.add_separator()
+	ctx.context_menu.add_item("Model Create", 62)
 	ctx.context_menu.id_pressed.connect(on_context_menu_id_pressed)
 	ctx.ui.add_child(ctx.context_menu)
 
@@ -116,6 +121,9 @@ func build_floor_menu() -> void:
 	ctx.floor_menu.add_item("Edit Floor Color / Texture", 0)
 	ctx.floor_menu.add_item("Delete Floor", 1)
 	ctx.floor_menu.add_separator()
+	ctx.floor_menu.add_item("Create Object Here", 10)
+	ctx.floor_menu.add_item("Load Object Here", 11)
+	ctx.floor_menu.add_separator()
 	ctx.floor_menu.add_item("Cancel", 2)
 	ctx.floor_menu.id_pressed.connect(on_floor_menu_id_pressed)
 	ctx.ui.add_child(ctx.floor_menu)
@@ -133,6 +141,12 @@ func on_floor_menu_id_pressed(id: int) -> void:
 			ctx.floor_ops.delete_selected_floor()
 		2:
 			ctx.floor_ops.clear_selection()
+		10:
+			if ctx.object_builder != null:
+				ctx.object_builder.add_object_at(ctx.input.get_mouse_point())
+		11:
+			if ctx.object_builder != null:
+				ctx.object_builder.open_load_menu_at(ctx.input.get_mouse_point())
 
 func open_wall_menu() -> void:
 	if ctx.selected_segment == null:
@@ -158,7 +172,9 @@ func on_wall_menu_id_pressed(id: int) -> void:
 		6:
 			ctx.texture.open_texture_prompt()
 
-func open_context_menu() -> void:
+func open_context_menu(world_position: Vector2 = Vector2.INF) -> void:
+	if world_position.is_finite():
+		ctx.context_menu_world_position = world_position
 	ctx.context_menu.popup(Rect2i(Vector2i(ctx.host.get_viewport().get_mouse_position()) + Vector2i(8, 8), Vector2i.ZERO))
 
 func on_context_menu_id_pressed(id: int) -> void:
@@ -192,6 +208,16 @@ func on_context_menu_id_pressed(id: int) -> void:
 			ctx.rendering.set_iso_view_quadrant(2)
 		43:
 			ctx.rendering.set_iso_view_quadrant(3)
+		60:
+			if ctx.object_builder != null:
+				ctx.object_builder.add_object_at(ctx.context_menu_world_position)
+		61:
+			if ctx.object_builder != null:
+				ctx.object_builder.open_load_menu_at(ctx.context_menu_world_position)
+		62:
+			if ctx.object_builder != null:
+				if ctx.object_builder.begin_model_create_mode(ctx.context_menu_world_position):
+					ctx.ui_module.set_status("Model Create mode: preview the model without creating an object. Right-click to edit it; Escape exits.")
 
 func update_context_menu_grid_item() -> void:
 	if ctx.context_menu == null:

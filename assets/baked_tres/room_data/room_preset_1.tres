@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://dla5ljfkdnx0w" path="res://scripts/resource/floor_space.gd" id="1_mdxx7"]
 [ext_resource type="Script" uid="uid://xpcnftcgmj5p" path="res://scripts/resource/room_data.gd" id="1_oxxt4"]
 [ext_resource type="Script" uid="uid://cgs1ha0arv0al" path="res://scripts/resource/wall_segment.gd" id="2_mdxx7"]
-[ext_resource type="Texture2D" uid="uid://b7juw727y5vvr" path="res://assets/textures/wall_texture/tile091.png" id="3_gx0ck"]
+[ext_resource type="Texture2D" uid="uid://b7juw727y5vvr" path="res://assets/textures/all_texture/tile091.png" id="3_gx0ck"]
 
 [sub_resource type="Resource" id="Resource_655al"]
 script = ExtResource("2_mdxx7")

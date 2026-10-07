@@ -13,7 +13,8 @@ func unhandled_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.pressed:
 		var mouse_button: int = (event as InputEventMouseButton).button_index
 		if mouse_button == MOUSE_BUTTON_LEFT:
-			on_left_click()
+			var mouse_event: InputEventMouseButton = event as InputEventMouseButton
+			on_left_click(mouse_event.shift_pressed)
 		elif mouse_button == MOUSE_BUTTON_RIGHT:
 			on_right_click()
 		return
@@ -31,6 +32,24 @@ func process(_delta: float) -> void:
 	var mouse_point := get_mouse_point()
 	ctx.mouse_preview_point = mouse_point
 	ctx.has_mouse_preview = true
+
+	if ctx.object_builder != null and ctx.object_builder.is_model_part_move_active():
+		ctx.object_builder.update_model_part_move_preview(mouse_point, true)
+		ctx.overlay.queue_redraw()
+		return
+
+	if ctx.object_builder != null and ctx.object_builder.is_model_create_mode_active():
+		if ctx.object_builder.is_model_create_preview_active():
+			ctx.object_builder.update_model_create_preview(mouse_point)
+		else:
+			ctx.object_builder.update_model_create_hover(mouse_point)
+		ctx.overlay.queue_redraw()
+		return
+
+	if ctx.object_builder != null and ctx.object_builder.is_model_edit_mode_active():
+		ctx.overlay.queue_redraw()
+		return
+
 	refresh_hover_wall(mouse_point)
 
 	if ctx.state == RoomBuilderTypes.State.FLOOR_PLACING:
@@ -86,8 +105,24 @@ func refresh_hover_wall(mouse_point: Vector2) -> void:
 	if changed:
 		ctx.overlay.queue_redraw()
 
-func on_left_click() -> void:
+func on_left_click(additive_selection: bool = false) -> void:
 	if not ctx.DEBUG_MODE:
+		return
+
+	if ctx.object_builder != null and ctx.object_builder.is_model_part_move_active():
+		return
+
+	if ctx.object_builder != null and ctx.object_builder.is_model_create_mode_active():
+		if ctx.object_builder.handle_model_create_left_click(get_mouse_point(), additive_selection):
+			ctx.ui_module.set_status("Model workspace updated.")
+		else:
+			ctx.ui_module.set_status("Model workspace could not handle the click.")
+		return
+
+	if ctx.object_builder != null and ctx.object_builder.is_model_edit_mode_active():
+		var selected_part: ModelData = ctx.object_builder.select_model_part_at(get_mouse_point())
+		if selected_part != null:
+			ctx.ui_module.set_status("Model part selected: %s." % selected_part.model_name)
 		return
 
 	if ctx.state == RoomBuilderTypes.State.FLOOR_PLACING:
@@ -103,6 +138,13 @@ func on_left_click() -> void:
 
 	match ctx.state:
 		RoomBuilderTypes.State.IDLE:
+			if ctx.object_builder != null:
+				var object_hit: ObjectData = ctx.object_builder.select_object_at(mouse_point, true)
+				if object_hit != null:
+					ctx.wall_ops.clear_selection()
+					ctx.floor_ops.clear_selection()
+					ctx.ui_module.set_status("Object selected: %s." % object_hit.object_name)
+					return
 			if not hit.is_empty():
 				ctx.wall_ops.select_wall(hit)
 				ctx.ui_module.open_wall_menu()
@@ -132,6 +174,22 @@ func on_right_click() -> void:
 
 	var screen_point := ctx.host.get_local_mouse_position()
 	var mouse_point := get_mouse_point()
+
+	if ctx.object_builder != null and ctx.object_builder.is_model_part_move_active():
+		ctx.object_builder.open_model_move_context_at(mouse_point)
+		ctx.host.get_viewport().set_input_as_handled()
+		return
+
+	if ctx.object_builder != null and ctx.object_builder.is_model_mode_active():
+		ctx.object_builder.open_model_edit_context_at(mouse_point)
+		ctx.host.get_viewport().set_input_as_handled()
+		return
+
+	if ctx.object_builder != null and ctx.object_builder.has_object_at(mouse_point):
+		ctx.object_builder.open_context_menu_at(mouse_point)
+		ctx.host.get_viewport().set_input_as_handled()
+		return
+
 	var hit: Dictionary = ctx.wall_ops.pick_wall(mouse_point, screen_point)
 	if not hit.is_empty():
 		ctx.floor_ops.clear_selection()
@@ -147,9 +205,23 @@ func on_right_click() -> void:
 		return
 
 	ctx.floor_ops.clear_selection()
-	ctx.ui_module.open_context_menu()
+
+	# Empty space uses the original RoomBuilder context menu.
+	# Object creation/loading is integrated into that same menu so the
+	# existing Save / Load Room / Grid / Floor / ISO actions remain available.
+	ctx.ui_module.open_context_menu(mouse_point)
 
 func handle_cancel() -> void:
+	if ctx.object_builder != null and ctx.object_builder.is_model_part_move_active():
+		ctx.object_builder.cancel_model_part_move()
+		ctx.ui_module.set_status("Model part move cancelled.")
+		return
+
+	if ctx.object_builder != null and ctx.object_builder.is_model_mode_active():
+		ctx.object_builder.exit_model_edit_mode()
+		ctx.ui_module.set_status("Model editing mode exited.")
+		return
+
 	match ctx.state:
 		RoomBuilderTypes.State.PLACING_END, RoomBuilderTypes.State.START_PROMPT, RoomBuilderTypes.State.END_PROMPT, RoomBuilderTypes.State.SNAP_PROMPT:
 			ctx.wall_ops.cancel_wall()

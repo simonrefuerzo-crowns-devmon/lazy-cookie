@@ -30,6 +30,7 @@ const Operation = RoomBuilderTypes.Operation
 @export_range(0.0, 32.0, 1.0) var iso_wall_cut_height: float = 5.0
 @export_range(0.05, 1.0, 0.01) var iso_view_transition_duration: float = 0.28
 @export_range(0.05, 1.5, 0.01) var iso_quadrant_turn_duration: float = 0.35
+@export var room_camera: RoomBuilderCamera
 
 @export_category("Debug")
 @export var DEBUG_MODE: bool = true
@@ -47,13 +48,14 @@ var _texture: RoomBuilderTextureEditing
 var _persistence: RoomBuilderPersistence
 var _floor_ops: RoomBuilderFloorOps
 var _ui: RoomBuilderUI
+var _object_builder: ObjectBuilder
 
 func _ready() -> void:
 	_ctx = _make_context()
-	_create_modules()
 	if _ctx.room_data == null:
 		_ctx.room_data = RoomData.new()
 		room_data = _ctx.room_data
+	_create_modules()
 	if not _ctx.DEBUG_MODE:
 		return
 
@@ -69,7 +71,12 @@ func _ready() -> void:
 
 	_grid.setup()
 	_rendering.setup()
+	_configure_camera()
 	_ui.setup()
+	if _object_builder != null:
+		_object_builder.set_debug_mode(_ctx.DEBUG_MODE)
+		_object_builder.set_room_data(_ctx.room_data)
+		_object_builder.set_render_mode(_ctx.isometric_mode, _ctx.iso_wall_renderer, 0.0)
 	rebuild_walls()
 	_set_status("Left click an empty area to start a wall. Click an existing wall to edit it. Right click an open area for renderer / Iso views. Right click a wall or floor for editing.")
 	_floor_ops.prompt_for_new_enclosures()
@@ -99,10 +106,13 @@ func set_room_data(new_room_data: RoomData) -> void:
 	_ctx.snap_hits_body = false
 	_ctx.accepted_snap_hits_body = false
 	_rendering.clear_ghost()
+	if _object_builder != null:
+		_object_builder.set_room_data(new_room_data)
 
 	new_room_data.changed.connect(rebuild_walls)
 	rebuild_walls()
-	_ctx.overlay.queue_redraw()
+	if _ctx.overlay != null:
+		_ctx.overlay.queue_redraw()
 
 func _make_context() -> RoomBuilderContext:
 	var context := RoomBuilderContext.new()
@@ -130,6 +140,7 @@ func _make_context() -> RoomBuilderContext:
 	context.iso_wall_cut_height = maxf(iso_wall_cut_height, 0.0)
 	context.iso_view_transition_duration = maxf(iso_view_transition_duration, 0.05)
 	context.iso_quadrant_turn_duration = maxf(iso_quadrant_turn_duration, 0.05)
+	context.camera = room_camera
 	context.DEBUG_MODE = DEBUG_MODE
 	context.debug_texture_directory = debug_texture_directory
 	context.debug_texture_tile_size = debug_texture_tile_size
@@ -148,6 +159,12 @@ func _create_modules() -> void:
 	_floor_ops = RoomBuilderFloorOps.new(_ctx)
 	_ui = RoomBuilderUI.new(_ctx)
 
+	_object_builder = ObjectBuilder.new()
+	_object_builder.name = "ObjectBuilder"
+	_object_builder.room_data = _ctx.room_data
+	_object_builder.debug_mode = _ctx.DEBUG_MODE
+	host_add_object_builder(_object_builder)
+
 	_ctx.grid = _grid
 	_ctx.rendering = _rendering
 	_ctx.input = _input
@@ -157,8 +174,42 @@ func _create_modules() -> void:
 	_ctx.floor_ops = _floor_ops
 	_ctx.persistence = _persistence
 	_ctx.ui_module = _ui
+	_ctx.object_builder = _object_builder
+
+func host_add_object_builder(builder: ObjectBuilder) -> void:
+	if builder == null:
+		return
+	add_child(builder)
+
+func _configure_camera() -> void:
+	var camera := _ctx.camera
+	if camera == null:
+		return
+
+	if camera.has_method("set_isometric_mode"):
+		camera.call(
+			"set_isometric_mode",
+			_ctx.isometric_mode,
+			_ctx.iso_projection_angle,
+			_ctx.iso_view_quadrant
+		)
+
+	if camera.has_method("set_iso_view_quadrant"):
+		camera.call("set_iso_view_quadrant", _ctx.iso_view_quadrant, false)
+
+
+func get_room_camera() -> Camera2D:
+	if _ctx != null and _ctx.camera != null:
+		return _ctx.camera
+	var viewport := get_viewport()
+	if viewport == null:
+		return null
+	return viewport.get_camera_2d()
+
 
 func _process(delta: float) -> void:
+	if _rendering != null:
+		_rendering.process(delta)
 	_input.process(delta)
 
 func _unhandled_input(event: InputEvent) -> void:

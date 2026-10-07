@@ -107,6 +107,14 @@ func _finish_iso_quadrant_turn(target_quadrant: int) -> void:
 	_iso_quadrant_float = float(target_quadrant)
 
 
+func get_iso_quadrant_float() -> float:
+	return _iso_quadrant_float
+
+
+func is_iso_quadrant_turning() -> bool:
+	return _iso_quadrant_tween != null and _iso_quadrant_tween.is_valid()
+
+
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:

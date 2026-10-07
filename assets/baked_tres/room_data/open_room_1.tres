@@ -3,14 +3,116 @@
 [ext_resource type="Script" uid="uid://dla5ljfkdnx0w" path="res://scripts/resource/floor_space.gd" id="1_15wgq"]
 [ext_resource type="Script" uid="uid://xpcnftcgmj5p" path="res://scripts/resource/room_data.gd" id="1_edrkb"]
 [ext_resource type="Script" uid="uid://cgs1ha0arv0al" path="res://scripts/resource/wall_segment.gd" id="2_egby5"]
-[ext_resource type="Texture2D" uid="uid://hp75k7rgl5hk" path="res://assets/textures/wall_texture/tile121.png" id="2_qbham"]
-[ext_resource type="Texture2D" uid="uid://klaya42en13a" path="res://assets/textures/wall_texture/tile082.png" id="3_15wgq"]
+[ext_resource type="Texture2D" uid="uid://hp75k7rgl5hk" path="res://assets/textures/all_texture/tile121.png" id="2_qbham"]
+[ext_resource type="Script" uid="uid://b3mgouejk8s4e" path="res://scripts/resource/object_data.gd" id="3_6tyl4"]
+[ext_resource type="Texture2D" uid="uid://klaya42en13a" path="res://assets/textures/all_texture/tile082.png" id="3_15wgq"]
+[ext_resource type="Texture2D" uid="uid://bk88q7t2c4uwm" path="res://assets/textures/all_texture/tile847.png" id="4_3t4qb"]
+[ext_resource type="Texture2D" uid="uid://cwyb7augnbmpn" path="res://assets/textures/all_texture/tile848.png" id="5_1qkja"]
+[ext_resource type="Texture2D" uid="uid://cn0w7f38s0ka5" path="res://assets/textures/all_texture/tile849.png" id="6_ovbfe"]
+[ext_resource type="Script" uid="uid://bmduvqlcuuxs8" path="res://scripts/resource/object_face_texture_data.gd" id="7_dyntv"]
 
 [sub_resource type="Resource" id="Resource_t1o0k"]
 script = ExtResource("1_15wgq")
 polygon = PackedVector2Array(-56, -72, 120, -72, 120, 40, 40, 96, -56, 40)
 texture = ExtResource("2_qbham")
 texture_tile_size = 32.0
+
+[sub_resource type="Resource" id="Resource_rswd1"]
+script = ExtResource("7_dyntv")
+face_target = 1
+edge_left = ExtResource("4_3t4qb")
+edge_right = ExtResource("5_1qkja")
+middle_texture = ExtResource("6_ovbfe")
+texture_size_overrides = {
+"corner_bottom_left": Vector2(16, 16),
+"corner_bottom_right": Vector2(16, 16),
+"corner_top_left": Vector2(16, 16),
+"corner_top_right": Vector2(16, 16),
+"edge_bottom": Vector2(16, 16),
+"edge_left": Vector2(16, 16),
+"edge_right": Vector2(16, 16),
+"edge_top": Vector2(16, 16),
+"middle": Vector2(16, 16)
+}
+
+[sub_resource type="Resource" id="Resource_ywyvj"]
+script = ExtResource("7_dyntv")
+face_target = 5
+texture_enabled = false
+
+[sub_resource type="Resource" id="Resource_o3aw5"]
+script = ExtResource("7_dyntv")
+texture_size_overrides = {
+"corner_bottom_left": Vector2(16, 16),
+"corner_bottom_right": Vector2(16, 16),
+"corner_top_left": Vector2(16, 16),
+"corner_top_right": Vector2(16, 16),
+"edge_bottom": Vector2(16, 16),
+"edge_left": Vector2(16, 16),
+"edge_right": Vector2(16, 16),
+"edge_top": Vector2(16, 16),
+"middle": Vector2(16, 16)
+}
+
+[sub_resource type="Resource" id="Resource_ly6br"]
+script = ExtResource("7_dyntv")
+face_target = 2
+
+[sub_resource type="Resource" id="Resource_u3gcq"]
+script = ExtResource("7_dyntv")
+face_target = 3
+corner_top_right = ExtResource("6_ovbfe")
+corner_bottom_right = ExtResource("6_ovbfe")
+edge_right = ExtResource("6_ovbfe")
+middle_texture = ExtResource("5_1qkja")
+texture_size_overrides = {
+"corner_bottom_left": Vector2(16, 16),
+"corner_bottom_right": Vector2(16, 16),
+"corner_top_left": Vector2(16, 16),
+"corner_top_right": Vector2(16, 16),
+"edge_bottom": Vector2(16, 16),
+"edge_left": Vector2(16, 16),
+"edge_right": Vector2(16, 16),
+"edge_top": Vector2(16, 16),
+"middle": Vector2(16, 16)
+}
+
+[sub_resource type="Resource" id="Resource_nu0gp"]
+script = ExtResource("7_dyntv")
+face_target = 4
+
+[sub_resource type="Resource" id="Resource_yamlm"]
+script = ExtResource("3_6tyl4")
+object_name = "Bookshelf"
+description = "\"A tall wooden bookshelf lined with dusty volumes, old encyclopedias, and a few loose knick-knacks.\""
+position = Vector2(24, 0)
+size_px = Vector2i(64, 24)
+hp = 150.0
+carried_weight = 85.0
+required_hands = 2
+is_breakable = true
+break_type = 1
+corner_radius_px = 1.0
+height_px = 80.0
+corner_size_px = Vector2i(16, 16)
+use_uniform_texture_size = false
+texture_size_overrides = {
+"corner_bottom_left": Vector2(16, 16),
+"corner_bottom_right": Vector2(16, 16),
+"corner_top_left": Vector2(16, 16),
+"corner_top_right": Vector2(16, 16),
+"edge_bottom": Vector2(16, 16),
+"edge_left": Vector2(16, 16),
+"edge_right": Vector2(16, 16),
+"edge_top": Vector2(16, 16),
+"middle": Vector2(16, 16)
+}
+front_face_textures = SubResource("Resource_o3aw5")
+back_face_textures = SubResource("Resource_rswd1")
+left_face_textures = SubResource("Resource_ly6br")
+right_face_textures = SubResource("Resource_u3gcq")
+top_face_textures = SubResource("Resource_nu0gp")
+bottom_face_textures = SubResource("Resource_ywyvj")
 
 [sub_resource type="Resource" id="Resource_5mc5e"]
 script = ExtResource("2_egby5")
@@ -49,3 +151,4 @@ inside_filler_color = Color(0.5372549, 0.4392157, 0.43137255, 1)
 script = ExtResource("1_edrkb")
 wall_segments = Array[ExtResource("2_egby5")]([SubResource("Resource_5mc5e"), SubResource("Resource_qvlit"), SubResource("Resource_ah2lk")])
 floor_spaces = Array[ExtResource("1_15wgq")]([SubResource("Resource_t1o0k")])
+objects = Array[ExtResource("3_6tyl4")]([SubResource("Resource_yamlm")])

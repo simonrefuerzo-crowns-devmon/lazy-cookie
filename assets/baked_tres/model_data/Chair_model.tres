@@ -1,0 +1,610 @@
+[gd_resource type="Resource" script_class="ModelData" format=3 uid="uid://l6cpn8wrlwpf"]
+
+[ext_resource type="Script" uid="uid://bmduvqlcuuxs8" path="res://scripts/resource/object_face_texture_data.gd" id="1_ic8ox"]
+[ext_resource type="Script" uid="uid://dnxjn2l6soi50" path="res://scripts/resource/model_data.gd" id="2_io1xh"]
+[ext_resource type="Texture2D" uid="uid://c747uskq2upjx" path="res://assets/textures/all_texture/tile088.png" id="3_bcki8"]
+
+[sub_resource type="Resource" id="Resource_vc0ol"]
+script = ExtResource("1_ic8ox")
+face_target = 1
+
+[sub_resource type="Resource" id="Resource_tivao"]
+script = ExtResource("1_ic8ox")
+face_target = 5
+texture_enabled = false
+
+[sub_resource type="Resource" id="Resource_wj12n"]
+script = ExtResource("1_ic8ox")
+
+[sub_resource type="Resource" id="Resource_7eubi"]
+script = ExtResource("1_ic8ox")
+face_target = 2
+
+[sub_resource type="Resource" id="Resource_24n26"]
+script = ExtResource("1_ic8ox")
+face_target = 1
+
+[sub_resource type="Resource" id="Resource_76jyo"]
+script = ExtResource("1_ic8ox")
+face_target = 5
+texture_enabled = false
+
+[sub_resource type="Resource" id="Resource_mbpek"]
+script = ExtResource("1_ic8ox")
+
+[sub_resource type="Resource" id="Resource_xu1ot"]
+script = ExtResource("1_ic8ox")
+face_target = 2
+
+[sub_resource type="Resource" id="Resource_yutjx"]
+script = ExtResource("1_ic8ox")
+face_target = 1
+
+[sub_resource type="Resource" id="Resource_fc3ea"]
+script = ExtResource("1_ic8ox")
+face_target = 5
+texture_enabled = false
+
+[sub_resource type="Resource" id="Resource_xa0d2"]
+script = ExtResource("1_ic8ox")
+
+[sub_resource type="Resource" id="Resource_f5dta"]
+script = ExtResource("1_ic8ox")
+face_target = 2
+
+[sub_resource type="Resource" id="Resource_ykyfn"]
+script = ExtResource("1_ic8ox")
+face_target = 1
+
+[sub_resource type="Resource" id="Resource_ruu5r"]
+script = ExtResource("1_ic8ox")
+face_target = 5
+texture_enabled = false
+
+[sub_resource type="Resource" id="Resource_j5tjt"]
+script = ExtResource("1_ic8ox")
+
+[sub_resource type="Resource" id="Resource_3322c"]
+script = ExtResource("1_ic8ox")
+face_target = 2
+
+[sub_resource type="Resource" id="Resource_nlndj"]
+script = ExtResource("1_ic8ox")
+face_target = 1
+
+[sub_resource type="Resource" id="Resource_ofp4q"]
+script = ExtResource("1_ic8ox")
+face_target = 5
+texture_enabled = false
+
+[sub_resource type="Resource" id="Resource_nm5gu"]
+script = ExtResource("1_ic8ox")
+
+[sub_resource type="Resource" id="Resource_thwcr"]
+script = ExtResource("1_ic8ox")
+face_target = 2
+
+[sub_resource type="Resource" id="Resource_d5ier"]
+script = ExtResource("1_ic8ox")
+face_target = 1
+middle_texture = ExtResource("3_bcki8")
+
+[sub_resource type="Resource" id="Resource_7c0pd"]
+script = ExtResource("1_ic8ox")
+face_target = 5
+texture_enabled = false
+
+[sub_resource type="Resource" id="Resource_3s3jl"]
+script = ExtResource("1_ic8ox")
+middle_texture = ExtResource("3_bcki8")
+
+[sub_resource type="Resource" id="Resource_a0b70"]
+script = ExtResource("1_ic8ox")
+face_target = 2
+middle_texture = ExtResource("3_bcki8")
+
+[sub_resource type="Resource" id="Resource_25kbe"]
+script = ExtResource("1_ic8ox")
+face_target = 3
+middle_texture = ExtResource("3_bcki8")
+
+[sub_resource type="Resource" id="Resource_yirnt"]
+script = ExtResource("1_ic8ox")
+face_target = 4
+
+[sub_resource type="Resource" id="Resource_wamr1"]
+script = ExtResource("2_io1xh")
+model_name = "Model"
+local_position = Vector2(6, 4)
+front_face_textures = SubResource("Resource_3s3jl")
+back_face_textures = SubResource("Resource_d5ier")
+left_face_textures = SubResource("Resource_a0b70")
+right_face_textures = SubResource("Resource_25kbe")
+top_face_textures = SubResource("Resource_yirnt")
+bottom_face_textures = SubResource("Resource_7c0pd")
+
+[sub_resource type="Resource" id="Resource_ol3d2"]
+script = ExtResource("1_ic8ox")
+face_target = 1
+middle_texture = ExtResource("3_bcki8")
+
+[sub_resource type="Resource" id="Resource_6laox"]
+script = ExtResource("1_ic8ox")
+face_target = 5
+texture_enabled = false
+
+[sub_resource type="Resource" id="Resource_w3ywn"]
+script = ExtResource("1_ic8ox")
+middle_texture = ExtResource("3_bcki8")
+
+[sub_resource type="Resource" id="Resource_fq8e5"]
+script = ExtResource("1_ic8ox")
+face_target = 2
+middle_texture = ExtResource("3_bcki8")
+
+[sub_resource type="Resource" id="Resource_jt5rd"]
+script = ExtResource("1_ic8ox")
+face_target = 3
+middle_texture = ExtResource("3_bcki8")
+
+[sub_resource type="Resource" id="Resource_irob0"]
+script = ExtResource("1_ic8ox")
+face_target = 4
+middle_texture = ExtResource("3_bcki8")
+
+[sub_resource type="Resource" id="Resource_d3cme"]
+script = ExtResource("2_io1xh")
+model_name = "Model"
+size_px = Vector2(40, 32)
+local_position = Vector2(-6, -4)
+local_height_offset_px = 24.0
+corner_style = 1
+height_px = 4.0
+front_face_textures = SubResource("Resource_w3ywn")
+back_face_textures = SubResource("Resource_ol3d2")
+left_face_textures = SubResource("Resource_fq8e5")
+right_face_textures = SubResource("Resource_jt5rd")
+top_face_textures = SubResource("Resource_irob0")
+bottom_face_textures = SubResource("Resource_6laox")
+
+[sub_resource type="Resource" id="Resource_fr7ac"]
+script = ExtResource("1_ic8ox")
+face_target = 3
+
+[sub_resource type="Resource" id="Resource_guk86"]
+script = ExtResource("1_ic8ox")
+face_target = 4
+
+[sub_resource type="Resource" id="Resource_x74n3"]
+script = ExtResource("2_io1xh")
+model_name = "Model + Model Assembly"
+size_px = Vector2(1, 1)
+local_position = Vector2(-3, 10)
+height_px = 0.0
+is_assembly_parent = true
+parts = Array[ExtResource("2_io1xh")]([SubResource("Resource_wamr1"), SubResource("Resource_d3cme")])
+front_face_textures = SubResource("Resource_nm5gu")
+back_face_textures = SubResource("Resource_nlndj")
+left_face_textures = SubResource("Resource_thwcr")
+right_face_textures = SubResource("Resource_fr7ac")
+top_face_textures = SubResource("Resource_guk86")
+bottom_face_textures = SubResource("Resource_ofp4q")
+
+[sub_resource type="Resource" id="Resource_cnusm"]
+script = ExtResource("1_ic8ox")
+face_target = 1
+middle_texture = ExtResource("3_bcki8")
+
+[sub_resource type="Resource" id="Resource_65no0"]
+script = ExtResource("1_ic8ox")
+face_target = 5
+texture_enabled = false
+
+[sub_resource type="Resource" id="Resource_ipysh"]
+script = ExtResource("1_ic8ox")
+middle_texture = ExtResource("3_bcki8")
+
+[sub_resource type="Resource" id="Resource_7ykry"]
+script = ExtResource("1_ic8ox")
+face_target = 2
+middle_texture = ExtResource("3_bcki8")
+
+[sub_resource type="Resource" id="Resource_tbh0d"]
+script = ExtResource("1_ic8ox")
+face_target = 3
+middle_texture = ExtResource("3_bcki8")
+
+[sub_resource type="Resource" id="Resource_23kbu"]
+script = ExtResource("1_ic8ox")
+face_target = 4
+middle_texture = ExtResource("3_bcki8")
+
+[sub_resource type="Resource" id="Resource_5a0vf"]
+script = ExtResource("2_io1xh")
+model_name = "Model"
+local_position = Vector2(3, -10)
+front_face_textures = SubResource("Resource_ipysh")
+back_face_textures = SubResource("Resource_cnusm")
+left_face_textures = SubResource("Resource_7ykry")
+right_face_textures = SubResource("Resource_tbh0d")
+top_face_textures = SubResource("Resource_23kbu")
+bottom_face_textures = SubResource("Resource_65no0")
+
+[sub_resource type="Resource" id="Resource_waayt"]
+script = ExtResource("1_ic8ox")
+face_target = 3
+
+[sub_resource type="Resource" id="Resource_nl8wx"]
+script = ExtResource("1_ic8ox")
+face_target = 4
+
+[sub_resource type="Resource" id="Resource_ty2kv"]
+script = ExtResource("2_io1xh")
+model_name = "Model + Model Assembly + Model Assembly"
+size_px = Vector2(1, 1)
+local_position = Vector2(12, -8)
+height_px = 0.0
+is_assembly_parent = true
+parts = Array[ExtResource("2_io1xh")]([SubResource("Resource_x74n3"), SubResource("Resource_5a0vf")])
+front_face_textures = SubResource("Resource_j5tjt")
+back_face_textures = SubResource("Resource_ykyfn")
+left_face_textures = SubResource("Resource_3322c")
+right_face_textures = SubResource("Resource_waayt")
+top_face_textures = SubResource("Resource_nl8wx")
+bottom_face_textures = SubResource("Resource_ruu5r")
+
+[sub_resource type="Resource" id="Resource_nkmqu"]
+script = ExtResource("1_ic8ox")
+face_target = 1
+middle_texture = ExtResource("3_bcki8")
+
+[sub_resource type="Resource" id="Resource_04vaq"]
+script = ExtResource("1_ic8ox")
+face_target = 5
+texture_enabled = false
+
+[sub_resource type="Resource" id="Resource_kvfv6"]
+script = ExtResource("1_ic8ox")
+middle_texture = ExtResource("3_bcki8")
+
+[sub_resource type="Resource" id="Resource_644h8"]
+script = ExtResource("1_ic8ox")
+face_target = 2
+middle_texture = ExtResource("3_bcki8")
+
+[sub_resource type="Resource" id="Resource_fbopv"]
+script = ExtResource("1_ic8ox")
+face_target = 3
+middle_texture = ExtResource("3_bcki8")
+
+[sub_resource type="Resource" id="Resource_alx5v"]
+script = ExtResource("1_ic8ox")
+face_target = 4
+middle_texture = ExtResource("3_bcki8")
+
+[sub_resource type="Resource" id="Resource_fbyle"]
+script = ExtResource("2_io1xh")
+model_name = "Model"
+local_position = Vector2(-12, 8)
+front_face_textures = SubResource("Resource_kvfv6")
+back_face_textures = SubResource("Resource_nkmqu")
+left_face_textures = SubResource("Resource_644h8")
+right_face_textures = SubResource("Resource_fbopv")
+top_face_textures = SubResource("Resource_alx5v")
+bottom_face_textures = SubResource("Resource_04vaq")
+
+[sub_resource type="Resource" id="Resource_mpiud"]
+script = ExtResource("1_ic8ox")
+face_target = 3
+
+[sub_resource type="Resource" id="Resource_0d6g6"]
+script = ExtResource("1_ic8ox")
+face_target = 4
+
+[sub_resource type="Resource" id="Resource_6ktii"]
+script = ExtResource("2_io1xh")
+model_name = "Model + Model Assembly + Model Assembly + Model Assembly"
+size_px = Vector2(1, 1)
+local_position = Vector2(6, 8)
+height_px = 0.0
+is_assembly_parent = true
+parts = Array[ExtResource("2_io1xh")]([SubResource("Resource_ty2kv"), SubResource("Resource_fbyle")])
+front_face_textures = SubResource("Resource_xa0d2")
+back_face_textures = SubResource("Resource_yutjx")
+left_face_textures = SubResource("Resource_f5dta")
+right_face_textures = SubResource("Resource_mpiud")
+top_face_textures = SubResource("Resource_0d6g6")
+bottom_face_textures = SubResource("Resource_fc3ea")
+
+[sub_resource type="Resource" id="Resource_1io1u"]
+script = ExtResource("1_ic8ox")
+face_target = 1
+middle_texture = ExtResource("3_bcki8")
+
+[sub_resource type="Resource" id="Resource_5dgjb"]
+script = ExtResource("1_ic8ox")
+face_target = 5
+texture_enabled = false
+
+[sub_resource type="Resource" id="Resource_jcg62"]
+script = ExtResource("1_ic8ox")
+middle_texture = ExtResource("3_bcki8")
+
+[sub_resource type="Resource" id="Resource_ihiu4"]
+script = ExtResource("1_ic8ox")
+face_target = 2
+middle_texture = ExtResource("3_bcki8")
+
+[sub_resource type="Resource" id="Resource_i6m80"]
+script = ExtResource("1_ic8ox")
+face_target = 3
+middle_texture = ExtResource("3_bcki8")
+
+[sub_resource type="Resource" id="Resource_pexli"]
+script = ExtResource("1_ic8ox")
+face_target = 4
+middle_texture = ExtResource("3_bcki8")
+
+[sub_resource type="Resource" id="Resource_r6d60"]
+script = ExtResource("2_io1xh")
+model_name = "Model"
+local_position = Vector2(-6, -8)
+front_face_textures = SubResource("Resource_jcg62")
+back_face_textures = SubResource("Resource_1io1u")
+left_face_textures = SubResource("Resource_ihiu4")
+right_face_textures = SubResource("Resource_i6m80")
+top_face_textures = SubResource("Resource_pexli")
+bottom_face_textures = SubResource("Resource_5dgjb")
+
+[sub_resource type="Resource" id="Resource_mwfjk"]
+script = ExtResource("1_ic8ox")
+face_target = 3
+
+[sub_resource type="Resource" id="Resource_jxmjv"]
+script = ExtResource("1_ic8ox")
+face_target = 4
+
+[sub_resource type="Resource" id="Resource_stq3r"]
+script = ExtResource("2_io1xh")
+model_name = "Model + Model Assembly + Model Assembly + Model Assembly + Model Assembly"
+size_px = Vector2(1, 1)
+local_position = Vector2(-13, -2)
+height_px = 0.0
+is_assembly_parent = true
+parts = Array[ExtResource("2_io1xh")]([SubResource("Resource_6ktii"), SubResource("Resource_r6d60")])
+front_face_textures = SubResource("Resource_mbpek")
+back_face_textures = SubResource("Resource_24n26")
+left_face_textures = SubResource("Resource_xu1ot")
+right_face_textures = SubResource("Resource_mwfjk")
+top_face_textures = SubResource("Resource_jxmjv")
+bottom_face_textures = SubResource("Resource_76jyo")
+
+[sub_resource type="Resource" id="Resource_y7uj0"]
+script = ExtResource("1_ic8ox")
+face_target = 1
+
+[sub_resource type="Resource" id="Resource_fwwef"]
+script = ExtResource("1_ic8ox")
+face_target = 5
+texture_enabled = false
+
+[sub_resource type="Resource" id="Resource_nbfvt"]
+script = ExtResource("1_ic8ox")
+
+[sub_resource type="Resource" id="Resource_pcvx1"]
+script = ExtResource("1_ic8ox")
+face_target = 2
+
+[sub_resource type="Resource" id="Resource_fbkj5"]
+script = ExtResource("1_ic8ox")
+face_target = 1
+
+[sub_resource type="Resource" id="Resource_vtnpe"]
+script = ExtResource("1_ic8ox")
+face_target = 5
+texture_enabled = false
+
+[sub_resource type="Resource" id="Resource_xkvr5"]
+script = ExtResource("1_ic8ox")
+
+[sub_resource type="Resource" id="Resource_mbe3h"]
+script = ExtResource("1_ic8ox")
+face_target = 2
+
+[sub_resource type="Resource" id="Resource_34bco"]
+script = ExtResource("1_ic8ox")
+face_target = 1
+middle_texture = ExtResource("3_bcki8")
+
+[sub_resource type="Resource" id="Resource_tlnwb"]
+script = ExtResource("1_ic8ox")
+face_target = 5
+texture_enabled = false
+
+[sub_resource type="Resource" id="Resource_kosmc"]
+script = ExtResource("1_ic8ox")
+middle_texture = ExtResource("3_bcki8")
+
+[sub_resource type="Resource" id="Resource_ktgdl"]
+script = ExtResource("1_ic8ox")
+face_target = 2
+middle_texture = ExtResource("3_bcki8")
+
+[sub_resource type="Resource" id="Resource_lqyen"]
+script = ExtResource("1_ic8ox")
+face_target = 3
+middle_texture = ExtResource("3_bcki8")
+
+[sub_resource type="Resource" id="Resource_c2hvc"]
+script = ExtResource("1_ic8ox")
+face_target = 4
+middle_texture = ExtResource("3_bcki8")
+
+[sub_resource type="Resource" id="Resource_s1sxr"]
+script = ExtResource("2_io1xh")
+model_name = "Model"
+local_position = Vector2(-1, 3)
+corner_style = 1
+front_face_textures = SubResource("Resource_kosmc")
+back_face_textures = SubResource("Resource_34bco")
+left_face_textures = SubResource("Resource_ktgdl")
+right_face_textures = SubResource("Resource_lqyen")
+top_face_textures = SubResource("Resource_c2hvc")
+bottom_face_textures = SubResource("Resource_tlnwb")
+
+[sub_resource type="Resource" id="Resource_6y8ml"]
+script = ExtResource("1_ic8ox")
+face_target = 1
+middle_texture = ExtResource("3_bcki8")
+
+[sub_resource type="Resource" id="Resource_kih1k"]
+script = ExtResource("1_ic8ox")
+face_target = 5
+texture_enabled = false
+
+[sub_resource type="Resource" id="Resource_vpttk"]
+script = ExtResource("1_ic8ox")
+middle_texture = ExtResource("3_bcki8")
+
+[sub_resource type="Resource" id="Resource_5fcmk"]
+script = ExtResource("1_ic8ox")
+face_target = 2
+middle_texture = ExtResource("3_bcki8")
+
+[sub_resource type="Resource" id="Resource_hybpa"]
+script = ExtResource("1_ic8ox")
+face_target = 3
+middle_texture = ExtResource("3_bcki8")
+
+[sub_resource type="Resource" id="Resource_qnoj1"]
+script = ExtResource("1_ic8ox")
+face_target = 4
+middle_texture = ExtResource("3_bcki8")
+
+[sub_resource type="Resource" id="Resource_nwijt"]
+script = ExtResource("2_io1xh")
+model_name = "Model"
+size_px = Vector2(4, 32)
+local_position = Vector2(0, -8)
+local_height_offset_px = 24.0
+body_type = 4
+corner_style = 1
+height_px = 4.0
+top_end_style = 2
+front_face_textures = SubResource("Resource_vpttk")
+back_face_textures = SubResource("Resource_6y8ml")
+left_face_textures = SubResource("Resource_5fcmk")
+right_face_textures = SubResource("Resource_hybpa")
+top_face_textures = SubResource("Resource_qnoj1")
+bottom_face_textures = SubResource("Resource_kih1k")
+
+[sub_resource type="Resource" id="Resource_nvpk2"]
+script = ExtResource("1_ic8ox")
+face_target = 3
+
+[sub_resource type="Resource" id="Resource_tcuko"]
+script = ExtResource("1_ic8ox")
+face_target = 4
+
+[sub_resource type="Resource" id="Resource_1pb52"]
+script = ExtResource("2_io1xh")
+model_name = "Model + Model Assembly"
+size_px = Vector2(1, 1)
+local_position = Vector2(0, 11)
+height_px = 0.0
+is_assembly_parent = true
+parts = Array[ExtResource("2_io1xh")]([SubResource("Resource_s1sxr"), SubResource("Resource_nwijt")])
+front_face_textures = SubResource("Resource_xkvr5")
+back_face_textures = SubResource("Resource_fbkj5")
+left_face_textures = SubResource("Resource_mbe3h")
+right_face_textures = SubResource("Resource_nvpk2")
+top_face_textures = SubResource("Resource_tcuko")
+bottom_face_textures = SubResource("Resource_vtnpe")
+
+[sub_resource type="Resource" id="Resource_dwbbx"]
+script = ExtResource("1_ic8ox")
+face_target = 1
+middle_texture = ExtResource("3_bcki8")
+
+[sub_resource type="Resource" id="Resource_575tf"]
+script = ExtResource("1_ic8ox")
+face_target = 5
+texture_enabled = false
+
+[sub_resource type="Resource" id="Resource_eggk8"]
+script = ExtResource("1_ic8ox")
+middle_texture = ExtResource("3_bcki8")
+
+[sub_resource type="Resource" id="Resource_fk5w6"]
+script = ExtResource("1_ic8ox")
+face_target = 2
+middle_texture = ExtResource("3_bcki8")
+
+[sub_resource type="Resource" id="Resource_o6ybv"]
+script = ExtResource("1_ic8ox")
+face_target = 3
+middle_texture = ExtResource("3_bcki8")
+
+[sub_resource type="Resource" id="Resource_yhv3v"]
+script = ExtResource("1_ic8ox")
+face_target = 4
+middle_texture = ExtResource("3_bcki8")
+
+[sub_resource type="Resource" id="Resource_mx5dw"]
+script = ExtResource("2_io1xh")
+model_name = "Model"
+local_position = Vector2(-1, -10)
+body_type = 1
+corner_style = 1
+front_face_textures = SubResource("Resource_eggk8")
+back_face_textures = SubResource("Resource_dwbbx")
+left_face_textures = SubResource("Resource_fk5w6")
+right_face_textures = SubResource("Resource_o6ybv")
+top_face_textures = SubResource("Resource_yhv3v")
+bottom_face_textures = SubResource("Resource_575tf")
+
+[sub_resource type="Resource" id="Resource_76qke"]
+script = ExtResource("1_ic8ox")
+face_target = 3
+
+[sub_resource type="Resource" id="Resource_yyhia"]
+script = ExtResource("1_ic8ox")
+face_target = 4
+
+[sub_resource type="Resource" id="Resource_0mos1"]
+script = ExtResource("2_io1xh")
+model_name = "Model + Model Assembly + Model Assembly"
+size_px = Vector2(1, 1)
+local_position = Vector2(13, 2)
+local_height_offset_px = 28.0
+height_px = 0.0
+is_assembly_parent = true
+parts = Array[ExtResource("2_io1xh")]([SubResource("Resource_1pb52"), SubResource("Resource_mx5dw")])
+front_face_textures = SubResource("Resource_nbfvt")
+back_face_textures = SubResource("Resource_y7uj0")
+left_face_textures = SubResource("Resource_pcvx1")
+right_face_textures = SubResource("Resource_76qke")
+top_face_textures = SubResource("Resource_yyhia")
+bottom_face_textures = SubResource("Resource_fwwef")
+
+[sub_resource type="Resource" id="Resource_pmtng"]
+script = ExtResource("1_ic8ox")
+face_target = 3
+
+[sub_resource type="Resource" id="Resource_fxws8"]
+script = ExtResource("1_ic8ox")
+face_target = 4
+
+[resource]
+script = ExtResource("2_io1xh")
+model_name = "Chair Model"
+size_px = Vector2(1, 1)
+height_px = 0.0
+is_assembly_parent = true
+parts = Array[ExtResource("2_io1xh")]([SubResource("Resource_stq3r"), SubResource("Resource_0mos1")])
+front_face_textures = SubResource("Resource_wj12n")
+back_face_textures = SubResource("Resource_vc0ol")
+left_face_textures = SubResource("Resource_7eubi")
+right_face_textures = SubResource("Resource_pmtng")
+top_face_textures = SubResource("Resource_fxws8")
+bottom_face_textures = SubResource("Resource_tivao")

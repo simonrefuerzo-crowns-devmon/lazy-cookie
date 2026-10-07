@@ -36,6 +36,7 @@ var renderer_switch_duration: float
 var iso_view_transition_duration: float
 var iso_quadrant_turn_duration: float
 var iso_wall_cut_height: float
+var camera: Camera2D
 
 const save_dir := SAVE_DIR
 const snap_epsilon := SNAP_EPSILON
@@ -89,11 +90,14 @@ var ghost_renderer: WallRenderer
 var iso_ghost_renderer: IsoWallRenderer
 var ghost_segment: WallSegment
 var overlay: Node2D
+var context_menu_world_position := Vector2.ZERO
 var isometric_mode := true
 var iso_view_mode: IsoWallRenderer.ViewMode = IsoWallRenderer.ViewMode.ISO3_ALL_WALLS
 var renderer_tween: Tween
 var iso_quadrant_tween: Tween
 var iso_quadrant_transition_renderers: Array[IsoWallRenderer] = []
+var iso_floor_quadrant_transition_renderer: FloorRenderer
+var iso_object_quadrant_transition_renderer: IsoObjectRenderer
 
 # UI references.
 var ui: CanvasLayer
@@ -148,3 +152,6 @@ var texture: Variant
 var floor_ops: Variant
 var persistence: Variant
 var ui_module: Variant
+var object_builder: Variant
+var object_renderer: Variant
+var iso_object_renderer: Variant

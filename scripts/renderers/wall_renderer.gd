@@ -15,8 +15,11 @@ var _footprints: Array[Dictionary] = []
 
 
 func set_room(room: RoomData) -> void:
-	set_segments(room.wall_segments)
+	if room == null:
+		set_segments([])
+		return
 
+	set_segments(room.wall_segments)
 
 func set_segments(segments: Array[WallSegment]) -> void:
 	_paths = _build_paths(segments)

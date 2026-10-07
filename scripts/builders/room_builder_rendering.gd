@@ -3,6 +3,10 @@ extends RefCounted
 
 ## Wall renderers, ghost preview, overlay drawing, and render mode switching.
 var ctx: RoomBuilderContext
+var _object_projection_initialized: bool = false
+var _last_object_projection_angle: float = 0.0
+var _last_object_view_quadrant: int = -1
+var _last_object_view_pivot: Vector2 = Vector2.ZERO
 
 func _init(context: RoomBuilderContext) -> void:
 	ctx = context
@@ -11,6 +15,7 @@ func setup() -> void:
 	create_renderers()
 	create_overlay()
 	update_overlay_transform()
+	sync_object_renderer(true)
 
 func create_renderers() -> void:
 	ctx.floor_renderer = FloorRenderer.new()
@@ -36,7 +41,7 @@ func create_renderers() -> void:
 	ctx.host.add_child(ctx.iso_back_wall_renderer)
 
 	ctx.iso_front_wall_renderer = IsoWallRenderer.new()
-	ctx.iso_front_wall_renderer.name = "IsoFrontCutWallRenderer"
+	ctx.iso_front_wall_renderer.name = "IsoFrontWallRenderer"
 	ctx.iso_front_wall_renderer.z_index = 3
 	configure_iso_secondary_renderer(ctx.iso_front_wall_renderer)
 	ctx.host.add_child(ctx.iso_front_wall_renderer)
@@ -66,9 +71,15 @@ func create_renderers() -> void:
 	ctx.floor_renderer.set_view(ctx.isometric_mode, ctx.iso_wall_renderer)
 	ctx.ghost_renderer.modulate.a = 0.0 if ctx.isometric_mode else 1.0
 	ctx.iso_ghost_renderer.modulate.a = 1.0 if ctx.isometric_mode else 0.0
+
 	_set_iso_layer_projection(ctx.iso_wall_renderer, ctx.iso_view_quadrant)
 	_set_iso_layer_projection(ctx.iso_back_wall_renderer, ctx.iso_view_quadrant)
 	_set_iso_layer_projection(ctx.iso_front_wall_renderer, ctx.iso_view_quadrant)
+	_apply_iso_mode_targets(false)
+
+	# ObjectBuilder owns the actual object renderer nodes. RoomBuilderRendering
+	# only configures and synchronizes them with the wall projection.
+	sync_object_renderer(true)
 
 func configure_iso_renderer(renderer: IsoWallRenderer) -> void:
 	renderer.wall_height = ctx.iso_wall_height
@@ -94,9 +105,10 @@ func _set_iso_layer_projection(renderer: IsoWallRenderer, quadrant: int) -> void
 	renderer.view_quadrant = posmod(quadrant, 4)
 	renderer.view_mode = IsoWallRenderer.ViewMode.ISO3_ALL_WALLS
 
-
 func _get_front_direction(quadrant: int) -> Vector2:
 	match posmod(quadrant, 4):
+		0:
+			return Vector2(1.0, 1.0).normalized()
 		1:
 			return Vector2(1.0, -1.0).normalized()
 		2:
@@ -151,6 +163,53 @@ func _refresh_iso_segments() -> void:
 	ctx.iso_back_wall_renderer.set_segments(back)
 	ctx.iso_front_wall_renderer.set_segments(front)
 
+
+func _apply_iso_mode_targets(animate: bool = true) -> void:
+	if ctx.iso_wall_renderer == null or ctx.iso_back_wall_renderer == null or ctx.iso_front_wall_renderer == null:
+		return
+
+	var duration := maxf(ctx.iso_view_transition_duration, 0.001)
+	var target_all_alpha := 0.0
+	var target_back_alpha := 0.0
+	var target_front_alpha := 0.0
+	var target_all_height := ctx.iso_wall_height
+
+	match ctx.iso_view_mode:
+		IsoWallRenderer.ViewMode.ISO1_NO_WALLS:
+			target_all_alpha = 1.0
+			target_all_height = ctx.iso_wall_cut_height
+		IsoWallRenderer.ViewMode.ISO2_BACK_WALLS:
+			target_back_alpha = 1.0
+			target_front_alpha = 1.0
+		IsoWallRenderer.ViewMode.ISO3_ALL_WALLS:
+			target_all_alpha = 1.0
+			target_all_height = ctx.iso_wall_height
+
+	if not animate:
+		ctx.iso_wall_renderer.modulate.a = target_all_alpha
+		ctx.iso_back_wall_renderer.modulate.a = target_back_alpha
+		ctx.iso_front_wall_renderer.modulate.a = target_front_alpha
+		ctx.iso_wall_renderer.wall_height = target_all_height
+		ctx.iso_back_wall_renderer.wall_height = ctx.iso_wall_height
+		ctx.iso_front_wall_renderer.wall_height = ctx.iso_wall_cut_height
+		return
+
+	if ctx.renderer_tween != null and ctx.renderer_tween.is_valid():
+		ctx.renderer_tween.kill()
+
+	ctx.renderer_tween = ctx.host.create_tween()
+	ctx.renderer_tween.set_parallel(true)
+	ctx.renderer_tween.set_trans(Tween.TRANS_SINE)
+	ctx.renderer_tween.set_ease(Tween.EASE_IN_OUT)
+
+	ctx.renderer_tween.tween_property(ctx.iso_wall_renderer, "modulate:a", target_all_alpha, duration)
+	ctx.renderer_tween.tween_property(ctx.iso_back_wall_renderer, "modulate:a", target_back_alpha, duration)
+	ctx.renderer_tween.tween_property(ctx.iso_front_wall_renderer, "modulate:a", target_front_alpha, duration)
+	ctx.renderer_tween.tween_property(ctx.iso_wall_renderer, "wall_height", target_all_height, duration)
+	ctx.renderer_tween.tween_property(ctx.iso_back_wall_renderer, "wall_height", ctx.iso_wall_height, duration)
+	ctx.renderer_tween.tween_property(ctx.iso_front_wall_renderer, "wall_height", ctx.iso_wall_cut_height, duration)
+
+
 func create_overlay() -> void:
 	ctx.overlay = Node2D.new()
 	ctx.overlay.name = "Overlay"
@@ -185,20 +244,66 @@ func rebuild_walls() -> void:
 		ctx.wall_renderer.set_room(ctx.room_data)
 
 	if ctx.iso_wall_renderer != null:
-		_set_iso_layer_projection(ctx.iso_wall_renderer, ctx.iso_view_quadrant)
-		_refresh_iso_segments()
+		configure_iso_renderer(ctx.iso_wall_renderer)
+		ctx.iso_wall_renderer.set_room(ctx.room_data)
 
 	if ctx.iso_back_wall_renderer != null:
-		_set_iso_layer_projection(ctx.iso_back_wall_renderer, ctx.iso_view_quadrant)
+		configure_iso_secondary_renderer(ctx.iso_back_wall_renderer)
+		ctx.iso_back_wall_renderer.set_room(ctx.room_data)
 
 	if ctx.iso_front_wall_renderer != null:
-		_set_iso_layer_projection(ctx.iso_front_wall_renderer, ctx.iso_view_quadrant)
+		configure_iso_secondary_renderer(ctx.iso_front_wall_renderer)
+		ctx.iso_front_wall_renderer.set_room(ctx.room_data)
 
-	if ctx.isometric_mode:
-		_apply_iso_mode_targets(false)
+	_refresh_iso_segments()
+	_apply_iso_mode_targets(false)
+
+	if ctx.object_builder != null:
+		ctx.object_builder.set_room_data(ctx.room_data)
+		ctx.object_builder.set_render_mode(ctx.isometric_mode, ctx.iso_wall_renderer, 0.0)
+		sync_object_renderer(true)
 
 	if ctx.overlay != null:
 		ctx.overlay.queue_redraw()
+
+func process(_delta: float) -> void:
+	# Keep the ISO object projection aligned with the wall projector during
+	# quadrant/camera transitions, not only after the transition completes.
+	if ctx.isometric_mode:
+		sync_object_renderer(false)
+
+func sync_object_renderer(force: bool = false) -> void:
+	if ctx.object_builder == null or ctx.iso_wall_renderer == null:
+		return
+
+	if ctx.object_renderer == null and ctx.object_builder.object_renderer != null:
+		ctx.object_renderer = ctx.object_builder.object_renderer
+	if ctx.iso_object_renderer == null and ctx.object_builder.iso_object_renderer != null:
+		ctx.iso_object_renderer = ctx.object_builder.iso_object_renderer
+
+	if ctx.iso_object_renderer == null:
+		return
+
+	var projection_angle: float = ctx.iso_wall_renderer.projection_angle
+	var view_quadrant: int = ctx.iso_wall_renderer.view_quadrant
+	var view_pivot: Vector2 = ctx.iso_wall_renderer.view_pivot
+
+	var changed := (
+		force
+		or not _object_projection_initialized
+		or absf(projection_angle - _last_object_projection_angle) > 0.0001
+		or view_quadrant != _last_object_view_quadrant
+		or view_pivot.distance_to(_last_object_view_pivot) > 0.0001
+	)
+
+	if not changed:
+		return
+
+	ctx.object_builder.sync_projection(ctx.iso_wall_renderer)
+	_last_object_projection_angle = projection_angle
+	_last_object_view_quadrant = view_quadrant
+	_last_object_view_pivot = view_pivot
+	_object_projection_initialized = true
 
 func update_ghost() -> void:
 	if ctx.ghost_renderer == null or ctx.iso_ghost_renderer == null:
@@ -379,8 +484,15 @@ func _cancel_quadrant_transition() -> void:
 	for renderer in ctx.iso_quadrant_transition_renderers:
 		if is_instance_valid(renderer):
 			renderer.queue_free()
-
 	ctx.iso_quadrant_transition_renderers.clear()
+
+	if ctx.iso_floor_quadrant_transition_renderer != null and is_instance_valid(ctx.iso_floor_quadrant_transition_renderer):
+		ctx.iso_floor_quadrant_transition_renderer.queue_free()
+	ctx.iso_floor_quadrant_transition_renderer = null
+
+	if ctx.iso_object_quadrant_transition_renderer != null and is_instance_valid(ctx.iso_object_quadrant_transition_renderer):
+		ctx.iso_object_quadrant_transition_renderer.queue_free()
+	ctx.iso_object_quadrant_transition_renderer = null
 
 
 func switch_renderer(use_iso: bool) -> void:
@@ -390,21 +502,43 @@ func switch_renderer(use_iso: bool) -> void:
 	_cancel_quadrant_transition()
 
 	if ctx.isometric_mode == use_iso:
+		_apply_iso_mode_targets(true)
 		return
 
 	ctx.isometric_mode = use_iso
-	if ctx.floor_renderer != null:
-		ctx.floor_renderer.set_view(use_iso, ctx.iso_wall_renderer)
 
-	update_overlay_transform()
+	if ctx.floor_renderer != null:
+		ctx.floor_renderer.set_view(
+			use_iso,
+			ctx.iso_wall_renderer
+		)
+
+	configure_iso_renderer(ctx.iso_wall_renderer)
+	ctx.iso_wall_renderer.set_room(ctx.room_data)
+	ctx.wall_renderer.set_room(ctx.room_data)
+
+	_set_iso_layer_projection(
+		ctx.iso_back_wall_renderer,
+		ctx.iso_view_quadrant
+	)
+
+	_set_iso_layer_projection(
+		ctx.iso_front_wall_renderer,
+		ctx.iso_view_quadrant
+	)
+
+	_refresh_iso_segments()
+
+	if ctx.camera != null and ctx.camera.has_method("set_isometric_mode"):
+		ctx.camera.call(
+			"set_isometric_mode",
+			use_iso,
+			ctx.iso_projection_angle,
+			ctx.iso_view_quadrant
+		)
 
 	if ctx.renderer_tween != null and ctx.renderer_tween.is_valid():
 		ctx.renderer_tween.kill()
-
-	if use_iso:
-		ctx.iso_wall_renderer.modulate.a = 0.0
-		ctx.iso_back_wall_renderer.modulate.a = 0.0
-		ctx.iso_front_wall_renderer.modulate.a = 0.0
 
 	ctx.renderer_tween = ctx.host.create_tween()
 	ctx.renderer_tween.set_parallel(true)
@@ -413,36 +547,21 @@ func switch_renderer(use_iso: bool) -> void:
 
 	var duration := maxf(ctx.renderer_switch_duration, 0.001)
 
+	# Normal renderer visibility.
 	ctx.renderer_tween.tween_property(
 		ctx.wall_renderer,
 		"modulate:a",
 		0.0 if use_iso else 1.0,
 		duration
 	)
+
 	ctx.renderer_tween.tween_property(
 		ctx.ghost_renderer,
 		"modulate:a",
 		0.0 if use_iso else 1.0,
 		duration
 	)
-	ctx.renderer_tween.tween_property(
-		ctx.iso_wall_renderer,
-		"modulate:a",
-		1.0 if use_iso and ctx.iso_view_mode != IsoWallRenderer.ViewMode.ISO2_BACK_WALLS else 0.0,
-		duration
-	)
-	ctx.renderer_tween.tween_property(
-		ctx.iso_back_wall_renderer,
-		"modulate:a",
-		1.0 if use_iso and ctx.iso_view_mode == IsoWallRenderer.ViewMode.ISO2_BACK_WALLS else 0.0,
-		duration
-	)
-	ctx.renderer_tween.tween_property(
-		ctx.iso_front_wall_renderer,
-		"modulate:a",
-		1.0 if use_iso and ctx.iso_view_mode == IsoWallRenderer.ViewMode.ISO2_BACK_WALLS else 0.0,
-		duration
-	)
+
 	ctx.renderer_tween.tween_property(
 		ctx.iso_ghost_renderer,
 		"modulate:a",
@@ -450,8 +569,102 @@ func switch_renderer(use_iso: bool) -> void:
 		duration
 	)
 
+	if use_iso:
+		# All ISO renderers internally use ISO3 geometry.
+		# ISO1/ISO2 are represented by layer visibility and wall height.
+
+		ctx.iso_wall_renderer.modulate.a = 0.0
+		ctx.iso_back_wall_renderer.modulate.a = 0.0
+		ctx.iso_front_wall_renderer.modulate.a = 0.0
+
+		# Set the correct starting heights before the transition.
+		if ctx.iso_view_mode == IsoWallRenderer.ViewMode.ISO1_NO_WALLS:
+			ctx.iso_wall_renderer.wall_height = ctx.iso_wall_cut_height
+		else:
+			ctx.iso_wall_renderer.wall_height = ctx.iso_wall_height
+
+		ctx.iso_back_wall_renderer.wall_height = ctx.iso_wall_height
+		ctx.iso_front_wall_renderer.wall_height = ctx.iso_wall_cut_height
+
+		var target_all: float = (
+			1.0
+			if ctx.iso_view_mode != IsoWallRenderer.ViewMode.ISO2_BACK_WALLS
+			else 0.0
+		)
+
+		var target_back: float = (
+			1.0
+			if ctx.iso_view_mode == IsoWallRenderer.ViewMode.ISO2_BACK_WALLS
+			else 0.0
+		)
+
+		var target_front: float = (
+			1.0
+			if ctx.iso_view_mode == IsoWallRenderer.ViewMode.ISO2_BACK_WALLS
+			else 0.0
+		)
+
+		ctx.renderer_tween.tween_property(
+			ctx.iso_wall_renderer,
+			"modulate:a",
+			target_all,
+			duration
+		)
+
+		ctx.renderer_tween.tween_property(
+			ctx.iso_back_wall_renderer,
+			"modulate:a",
+			target_back,
+			duration
+		)
+
+		ctx.renderer_tween.tween_property(
+			ctx.iso_front_wall_renderer,
+			"modulate:a",
+			target_front,
+			duration
+		)
+
+	else:
+		# Returning to regular wall rendering.
+		ctx.iso_wall_renderer.wall_height = ctx.iso_wall_height
+		ctx.iso_back_wall_renderer.wall_height = ctx.iso_wall_height
+		ctx.iso_front_wall_renderer.wall_height = ctx.iso_wall_cut_height
+
+		ctx.renderer_tween.tween_property(
+			ctx.iso_wall_renderer,
+			"modulate:a",
+			0.0,
+			duration
+		)
+
+		ctx.renderer_tween.tween_property(
+			ctx.iso_back_wall_renderer,
+			"modulate:a",
+			0.0,
+			duration
+		)
+
+		ctx.renderer_tween.tween_property(
+			ctx.iso_front_wall_renderer,
+			"modulate:a",
+			0.0,
+			duration
+		)
+
+	# Keep the object renderer synchronized with the active projection.
+	if ctx.object_builder != null:
+		ctx.object_builder.set_render_mode(
+			use_iso,
+			ctx.iso_wall_renderer,
+			duration
+		)
+
+		sync_object_renderer(true)
+
 	if ctx.grid_renderer != null:
 		ctx.grid_renderer.queue_redraw()
+
 	if ctx.overlay != null:
 		ctx.overlay.queue_redraw()
 
@@ -460,98 +673,40 @@ func switch_renderer(use_iso: bool) -> void:
 		% ("Iso Wall Render" if use_iso else "Wall Render")
 	)
 
-func _apply_iso_mode_targets(animate: bool = true) -> void:
-	var duration := maxf(ctx.iso_view_transition_duration, 0.001)
-	var target_all_alpha := 0.0
-	var target_back_alpha := 0.0
-	var target_front_alpha := 0.0
-	var target_all_height := ctx.iso_wall_height
-
-	match ctx.iso_view_mode:
-		IsoWallRenderer.ViewMode.ISO1_NO_WALLS:
-			target_all_alpha = 1.0
-			target_all_height = ctx.iso_wall_cut_height
-		IsoWallRenderer.ViewMode.ISO2_BACK_WALLS:
-			target_back_alpha = 1.0
-			target_front_alpha = 1.0
-		IsoWallRenderer.ViewMode.ISO3_ALL_WALLS:
-			target_all_alpha = 1.0
-			target_all_height = ctx.iso_wall_height
-
-	if not animate:
-		ctx.iso_wall_renderer.modulate.a = target_all_alpha
-		ctx.iso_back_wall_renderer.modulate.a = target_back_alpha
-		ctx.iso_front_wall_renderer.modulate.a = target_front_alpha
-		ctx.iso_wall_renderer.wall_height = target_all_height
-		ctx.iso_back_wall_renderer.wall_height = ctx.iso_wall_height
-		ctx.iso_front_wall_renderer.wall_height = ctx.iso_wall_cut_height
-		return
-
-	if ctx.renderer_tween != null and ctx.renderer_tween.is_valid():
-		ctx.renderer_tween.kill()
-
-	ctx.renderer_tween = ctx.host.create_tween()
-	ctx.renderer_tween.set_parallel(true)
-	ctx.renderer_tween.set_trans(Tween.TRANS_SINE)
-	ctx.renderer_tween.set_ease(Tween.EASE_IN_OUT)
-
-	ctx.renderer_tween.tween_property(
-		ctx.iso_wall_renderer,
-		"modulate:a",
-		target_all_alpha,
-		duration
-	)
-	ctx.renderer_tween.tween_property(
-		ctx.iso_back_wall_renderer,
-		"modulate:a",
-		target_back_alpha,
-		duration
-	)
-	ctx.renderer_tween.tween_property(
-		ctx.iso_front_wall_renderer,
-		"modulate:a",
-		target_front_alpha,
-		duration
-	)
-	ctx.renderer_tween.tween_property(
-		ctx.iso_wall_renderer,
-		"wall_height",
-		target_all_height,
-		duration
-	)
-	ctx.renderer_tween.tween_property(
-		ctx.iso_back_wall_renderer,
-		"wall_height",
-		ctx.iso_wall_height,
-		duration
-	)
-	ctx.renderer_tween.tween_property(
-		ctx.iso_front_wall_renderer,
-		"wall_height",
-		ctx.iso_wall_cut_height,
-		duration
-	)
-
+	ctx.ui_module.update_iso_view_menu_state()
+	
 
 func set_iso_view_mode(mode: IsoWallRenderer.ViewMode) -> void:
 	if not ctx.isometric_mode:
+		ctx.iso_view_mode = mode
 		switch_renderer(true)
+		ctx.ui_module.update_iso_view_menu_state()
+		return
 
 	ctx.iso_view_mode = mode
 	_refresh_iso_segments()
 	_apply_iso_mode_targets(true)
-	update_overlay_transform()
+
+	if ctx.iso_ghost_renderer != null:
+		ctx.iso_ghost_renderer.view_mode = IsoWallRenderer.ViewMode.ISO3_ALL_WALLS
+		ctx.iso_ghost_renderer.wall_height = ctx.iso_wall_height
+	if mode == IsoWallRenderer.ViewMode.ISO1_NO_WALLS:
+		ctx.iso_ghost_renderer.wall_height = ctx.iso_wall_cut_height
+
+	if ctx.object_builder != null:
+		sync_object_renderer(true)
+	if ctx.overlay != null:
+		ctx.overlay.queue_redraw()
 
 	match mode:
 		IsoWallRenderer.ViewMode.ISO1_NO_WALLS:
-			ctx.ui_module.set_status("Iso1 active: walls are cut to %.1f px." % ctx.iso_wall_cut_height)
+			ctx.ui_module.set_status("Iso1: all walls remain visible at %.1f px height." % ctx.iso_wall_cut_height)
 		IsoWallRenderer.ViewMode.ISO2_BACK_WALLS:
-			ctx.ui_module.set_status("Iso2 active: back 180° are full height; front 180° are cut to %.1f px." % ctx.iso_wall_cut_height)
+			ctx.ui_module.set_status("Iso2: back 180° walls are full height; front 180° walls are %.1f px high." % ctx.iso_wall_cut_height)
 		IsoWallRenderer.ViewMode.ISO3_ALL_WALLS:
-			ctx.ui_module.set_status("Iso3 active: all walls rendered at full height.")
+			ctx.ui_module.set_status("Iso3: all walls rendered at full height.")
 
-	if ctx.overlay != null:
-		ctx.overlay.queue_redraw()
+	ctx.ui_module.update_iso_view_menu_state()
 
 
 func _make_quadrant_transition_renderer(
@@ -576,23 +731,46 @@ func _make_quadrant_transition_renderer(
 	return renderer
 
 
+func _make_quadrant_transition_object_renderer(quadrant: int, target_alpha: float) -> IsoObjectRenderer:
+	var renderer := IsoObjectRenderer.new()
+	renderer.name = "IsoObjectQuadrantTransition"
+	renderer.z_index = 7
+	renderer.set_room(ctx.room_data)
+	renderer.set_selected_object(ctx.object_builder.get_selected_object() if ctx.object_builder != null else null)
+	renderer.projection_angle = ctx.iso_projection_angle
+	renderer.view_quadrant = posmod(quadrant, 4)
+	renderer.view_pivot = ctx.iso_wall_renderer.view_pivot
+	renderer.modulate.a = 0.0
+	ctx.host.add_child(renderer)
+	return renderer
+
+
 func set_iso_view_quadrant(quadrant: int, animate: bool = true) -> void:
 	var target_quadrant := posmod(quadrant, 4)
-	if target_quadrant == ctx.iso_view_quadrant:
+	if target_quadrant == ctx.iso_view_quadrant and ctx.iso_quadrant_transition_renderers.is_empty():
 		_notify_camera_quadrant(target_quadrant, false)
 		return
+
+	if not ctx.isometric_mode:
+		switch_renderer(true)
 
 	var old_quadrant := ctx.iso_view_quadrant
 	var duration := maxf(ctx.iso_quadrant_turn_duration, 0.001)
 
 	if not animate:
+		_cancel_quadrant_transition()
 		ctx.iso_view_quadrant = target_quadrant
 		_set_iso_layer_projection(ctx.iso_wall_renderer, target_quadrant)
 		_set_iso_layer_projection(ctx.iso_back_wall_renderer, target_quadrant)
 		_set_iso_layer_projection(ctx.iso_front_wall_renderer, target_quadrant)
 		_refresh_iso_segments()
+		_apply_iso_mode_targets(false)
+		if ctx.object_builder != null:
+			sync_object_renderer(true)
 		_notify_camera_quadrant(target_quadrant, false)
-		update_overlay_transform()
+		if ctx.overlay != null:
+			ctx.overlay.queue_redraw()
+		ctx.ui_module.update_iso_view_menu_state()
 		return
 
 	_cancel_quadrant_transition()
@@ -601,15 +779,30 @@ func set_iso_view_quadrant(quadrant: int, animate: bool = true) -> void:
 	var target_front: Array[WallSegment] = split_target[0]
 	var target_back: Array[WallSegment] = split_target[1]
 
-	var target_all_alpha := ctx.iso_wall_renderer.modulate.a
-	var target_back_alpha := ctx.iso_back_wall_renderer.modulate.a
-	var target_front_alpha := ctx.iso_front_wall_renderer.modulate.a
+	# Target layers are static at the destination quadrant and crossfaded with
+	# the source layers. The Camera2D performs the matching smooth quarter-turn.
+	var target_all_height := ctx.iso_wall_height
+	var target_all_alpha := 1.0
+	var target_back_height := ctx.iso_wall_height
+	var target_front_height : float = ctx.iso_wall_cut_height
+	var target_back_alpha := 0.0
+	var target_front_alpha := 0.0
+
+	match ctx.iso_view_mode:
+		IsoWallRenderer.ViewMode.ISO1_NO_WALLS:
+			target_all_height = ctx.iso_wall_cut_height
+		IsoWallRenderer.ViewMode.ISO2_BACK_WALLS:
+			target_all_alpha = 0.0
+			target_back_alpha = 1.0
+			target_front_alpha = 1.0
+		IsoWallRenderer.ViewMode.ISO3_ALL_WALLS:
+			pass
 
 	var transition_all := _make_quadrant_transition_renderer(
 		"IsoQuadrantTransitionAll",
 		4,
 		target_quadrant,
-		ctx.iso_wall_renderer.wall_height,
+		target_all_height,
 		ctx.room_data.wall_segments,
 		target_all_alpha
 	)
@@ -617,7 +810,7 @@ func set_iso_view_quadrant(quadrant: int, animate: bool = true) -> void:
 		"IsoQuadrantTransitionBack",
 		5,
 		target_quadrant,
-		ctx.iso_back_wall_renderer.wall_height,
+		target_back_height,
 		target_back,
 		target_back_alpha
 	)
@@ -625,12 +818,35 @@ func set_iso_view_quadrant(quadrant: int, animate: bool = true) -> void:
 		"IsoQuadrantTransitionFront",
 		6,
 		target_quadrant,
-		ctx.iso_front_wall_renderer.wall_height,
+		target_front_height,
 		target_front,
 		target_front_alpha
 	)
-
 	ctx.iso_quadrant_transition_renderers = [transition_all, transition_back, transition_front]
+
+	# Floor transition uses the target all-wall renderer strictly as a projector.
+	var target_floor := FloorRenderer.new()
+	target_floor.name = "IsoQuadrantTransitionFloor"
+	target_floor.z_index = -2
+	target_floor.set_view(true, transition_all)
+	target_floor.set_room(ctx.room_data)
+	target_floor.modulate.a = 0.0
+	ctx.host.add_child(target_floor)
+	ctx.iso_floor_quadrant_transition_renderer = target_floor
+
+	if ctx.object_builder != null and ctx.iso_object_renderer != null:
+		var target_object := _make_quadrant_transition_object_renderer(target_quadrant, 1.0)
+		ctx.iso_object_quadrant_transition_renderer = target_object
+
+	ctx.iso_wall_renderer.modulate.a = minf(ctx.iso_wall_renderer.modulate.a, 1.0)
+	ctx.iso_back_wall_renderer.modulate.a = minf(ctx.iso_back_wall_renderer.modulate.a, 1.0)
+	ctx.iso_front_wall_renderer.modulate.a = minf(ctx.iso_front_wall_renderer.modulate.a, 1.0)
+
+	var target_source_alpha := ctx.iso_wall_renderer.modulate.a
+	var target_source_back_alpha : float = ctx.iso_back_wall_renderer.modulate.a
+	var target_source_front_alpha : float = ctx.iso_front_wall_renderer.modulate.a
+	var target_floor_alpha := ctx.floor_renderer.modulate.a if ctx.floor_renderer != null else 1.0
+	var target_object_alpha : float = ctx.iso_object_renderer.modulate.a if ctx.iso_object_renderer != null else 1.0
 
 	ctx.iso_quadrant_tween = ctx.host.create_tween()
 	ctx.iso_quadrant_tween.set_parallel(true)
@@ -640,38 +856,67 @@ func set_iso_view_quadrant(quadrant: int, animate: bool = true) -> void:
 	ctx.iso_quadrant_tween.tween_property(ctx.iso_wall_renderer, "modulate:a", 0.0, duration)
 	ctx.iso_quadrant_tween.tween_property(ctx.iso_back_wall_renderer, "modulate:a", 0.0, duration)
 	ctx.iso_quadrant_tween.tween_property(ctx.iso_front_wall_renderer, "modulate:a", 0.0, duration)
-	ctx.iso_quadrant_tween.tween_property(transition_all, "modulate:a", target_all_alpha, duration)
-	ctx.iso_quadrant_tween.tween_property(transition_back, "modulate:a", target_back_alpha, duration)
-	ctx.iso_quadrant_tween.tween_property(transition_front, "modulate:a", target_front_alpha, duration)
+	ctx.iso_quadrant_tween.tween_property(transition_all, "modulate:a", target_source_alpha, duration)
+	ctx.iso_quadrant_tween.tween_property(transition_back, "modulate:a", target_source_back_alpha, duration)
+	ctx.iso_quadrant_tween.tween_property(transition_front, "modulate:a", target_source_front_alpha, duration)
+	if ctx.floor_renderer != null:
+		ctx.iso_quadrant_tween.tween_property(ctx.floor_renderer, "modulate:a", 0.0, duration)
+	ctx.iso_quadrant_tween.tween_property(target_floor, "modulate:a", target_floor_alpha, duration)
+
+	if ctx.iso_object_quadrant_transition_renderer != null:
+		ctx.iso_quadrant_tween.tween_property(ctx.iso_object_renderer, "modulate:a", 0.0, duration)
+		ctx.iso_quadrant_tween.tween_property(ctx.iso_object_quadrant_transition_renderer, "modulate:a", target_object_alpha, duration)
 
 	var quadrant_finished: Callable = func() -> void:
 		if is_instance_valid(ctx.iso_wall_renderer):
-			ctx.iso_wall_renderer.modulate.a = target_all_alpha
 			_set_iso_layer_projection(ctx.iso_wall_renderer, target_quadrant)
 		if is_instance_valid(ctx.iso_back_wall_renderer):
-			ctx.iso_back_wall_renderer.modulate.a = target_back_alpha
 			_set_iso_layer_projection(ctx.iso_back_wall_renderer, target_quadrant)
 		if is_instance_valid(ctx.iso_front_wall_renderer):
-			ctx.iso_front_wall_renderer.modulate.a = target_front_alpha
 			_set_iso_layer_projection(ctx.iso_front_wall_renderer, target_quadrant)
 
 		ctx.iso_view_quadrant = target_quadrant
 		_refresh_iso_segments()
+		_apply_iso_mode_targets(false)
+		_notify_camera_quadrant(target_quadrant, false)
+
+		if ctx.object_builder != null:
+			ctx.object_builder.sync_projection(ctx.iso_wall_renderer)
+			if is_instance_valid(ctx.iso_object_renderer):
+				ctx.iso_object_renderer.modulate.a = 1.0
+
+		if ctx.floor_renderer != null:
+			ctx.floor_renderer.modulate.a = 1.0
 
 		for renderer in ctx.iso_quadrant_transition_renderers:
 			if is_instance_valid(renderer):
 				renderer.queue_free()
 		ctx.iso_quadrant_transition_renderers.clear()
-		_notify_camera_quadrant(target_quadrant, false)
+
+		if ctx.iso_floor_quadrant_transition_renderer != null and is_instance_valid(ctx.iso_floor_quadrant_transition_renderer):
+			ctx.iso_floor_quadrant_transition_renderer.queue_free()
+		ctx.iso_floor_quadrant_transition_renderer = null
+
+		if ctx.iso_object_quadrant_transition_renderer != null and is_instance_valid(ctx.iso_object_quadrant_transition_renderer):
+			ctx.iso_object_quadrant_transition_renderer.queue_free()
+		ctx.iso_object_quadrant_transition_renderer = null
+
 		update_overlay_transform()
+		ctx.ui_module.update_iso_view_menu_state()
 
 	ctx.iso_quadrant_tween.finished.connect(quadrant_finished, CONNECT_ONE_SHOT)
-
 	_notify_camera_quadrant(target_quadrant, true)
-	ctx.ui_module.set_status("Turning Iso view from quadrant %d to quadrant %d." % [old_quadrant + 1, target_quadrant + 1])
+
+	ctx.ui_module.set_status(
+		"Turning Iso view from quadrant %d to quadrant %d." % [old_quadrant + 1, target_quadrant + 1]
+	)
 
 
 func _notify_camera_quadrant(quadrant: int, animate: bool) -> void:
+	if ctx.camera != null and ctx.camera.has_method("set_iso_view_quadrant"):
+		ctx.camera.call("set_iso_view_quadrant", quadrant, animate)
+		return
+
 	if ctx.host == null:
 		return
 
@@ -682,6 +927,7 @@ func _notify_camera_quadrant(quadrant: int, animate: bool) -> void:
 	var camera := viewport.get_camera_2d()
 	if camera != null and camera.has_method("set_iso_view_quadrant"):
 		camera.call("set_iso_view_quadrant", quadrant, animate)
+
 
 func clear_ghost() -> void:
 	var empty_segments: Array[WallSegment] = []

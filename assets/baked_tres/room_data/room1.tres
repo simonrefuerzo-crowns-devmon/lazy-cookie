@@ -1,9 +1,9 @@
 [gd_resource type="Resource" script_class="RoomData" format=3]
 
-[ext_resource type="Script" path="res://scripts/resource/floor_space.gd" id="1_iaop6"]
-[ext_resource type="Script" path="res://scripts/resource/room_data.gd" id="2_twt6k"]
-[ext_resource type="Script" path="res://scripts/resource/wall_segment.gd" id="3_x5s5g"]
-[ext_resource type="Texture2D" path="res://assets/textures/wall_texture/tile082.png" id="4_d1qmd"]
+[ext_resource type="Script" uid="uid://dla5ljfkdnx0w" path="res://scripts/resource/floor_space.gd" id="1_iaop6"]
+[ext_resource type="Script" uid="uid://xpcnftcgmj5p" path="res://scripts/resource/room_data.gd" id="2_twt6k"]
+[ext_resource type="Script" uid="uid://cgs1ha0arv0al" path="res://scripts/resource/wall_segment.gd" id="3_x5s5g"]
+[ext_resource type="Texture2D" uid="uid://klaya42en13a" path="res://assets/textures/all_texture/tile082.png" id="4_d1qmd"]
 
 [sub_resource type="Resource" id="Resource_655al"]
 script = ExtResource("3_x5s5g")

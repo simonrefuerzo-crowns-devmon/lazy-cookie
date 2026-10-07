@@ -7,6 +7,8 @@ const FLOOR_AREA_EPSILON := 0.5
 
 @export var wall_segments: Array[WallSegment] = []
 @export var floor_spaces: Array[FloorSpace] = []
+## Placed day-to-day room objects managed by ObjectBuilder/ObjectRenderer.
+@export var objects: Array[ObjectData] = []
 
 
 func add_wall_segment(
@@ -47,6 +49,23 @@ func add_floor_space(
 func remove_floor_space(floor: FloorSpace) -> void:
 	floor_spaces.erase(floor)
 	emit_changed()
+
+
+func add_object(object: ObjectData) -> ObjectData:
+	if object == null:
+		return null
+	objects.append(object)
+	emit_changed()
+	return object
+
+
+func remove_object(object: ObjectData) -> void:
+	objects.erase(object)
+	emit_changed()
+
+
+func has_object(object: ObjectData) -> bool:
+	return object != null and objects.has(object)
 
 
 func has_floor_for_polygon(points: PackedVector2Array) -> bool:
