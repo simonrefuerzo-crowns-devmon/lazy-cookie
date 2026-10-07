@@ -33,6 +33,9 @@ var DEBUG_MODE: bool
 var debug_texture_directory: String
 var debug_texture_tile_size: float
 var renderer_switch_duration: float
+var iso_view_transition_duration: float
+var iso_quadrant_turn_duration: float
+var iso_wall_cut_height: float
 
 const save_dir := SAVE_DIR
 const snap_epsilon := SNAP_EPSILON
@@ -79,6 +82,8 @@ var last_saved_name := "room1"
 var grid_renderer: Node2D
 var wall_renderer: WallRenderer
 var iso_wall_renderer: IsoWallRenderer
+var iso_back_wall_renderer: IsoWallRenderer
+var iso_front_wall_renderer: IsoWallRenderer
 var floor_renderer: FloorRenderer
 var ghost_renderer: WallRenderer
 var iso_ghost_renderer: IsoWallRenderer
@@ -87,6 +92,8 @@ var overlay: Node2D
 var isometric_mode := true
 var iso_view_mode: IsoWallRenderer.ViewMode = IsoWallRenderer.ViewMode.ISO3_ALL_WALLS
 var renderer_tween: Tween
+var iso_quadrant_tween: Tween
+var iso_quadrant_transition_renderers: Array[IsoWallRenderer] = []
 
 # UI references.
 var ui: CanvasLayer

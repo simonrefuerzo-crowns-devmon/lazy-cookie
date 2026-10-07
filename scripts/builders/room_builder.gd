@@ -27,6 +27,9 @@ const Operation = RoomBuilderTypes.Operation
 @export_range(0.0, 256.0, 1.0) var iso_wall_height: float = 96.0
 @export_range(10.0, 45.0, 0.5) var iso_projection_angle: float = 30.0
 @export_range(0, 3) var iso_view_quadrant: int = 0
+@export_range(0.0, 32.0, 1.0) var iso_wall_cut_height: float = 5.0
+@export_range(0.05, 1.0, 0.01) var iso_view_transition_duration: float = 0.28
+@export_range(0.05, 1.5, 0.01) var iso_quadrant_turn_duration: float = 0.35
 
 @export_category("Debug")
 @export var DEBUG_MODE: bool = true
@@ -124,6 +127,9 @@ func _make_context() -> RoomBuilderContext:
 	context.iso_wall_height = iso_wall_height
 	context.iso_projection_angle = iso_projection_angle
 	context.iso_view_quadrant = iso_view_quadrant
+	context.iso_wall_cut_height = maxf(iso_wall_cut_height, 0.0)
+	context.iso_view_transition_duration = maxf(iso_view_transition_duration, 0.05)
+	context.iso_quadrant_turn_duration = maxf(iso_quadrant_turn_duration, 0.05)
 	context.DEBUG_MODE = DEBUG_MODE
 	context.debug_texture_directory = debug_texture_directory
 	context.debug_texture_tile_size = debug_texture_tile_size

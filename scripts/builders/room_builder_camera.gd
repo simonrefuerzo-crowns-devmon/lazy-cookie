@@ -17,6 +17,9 @@ var iso_projection_angle: float = 30.0
 @export_range(0, 3)
 var iso_view_quadrant: int = 0
 
+@export_range(0.05, 1.5, 0.01)
+var iso_quadrant_turn_duration: float = 0.35
+
 @export_range(0.1, 3.0, 0.05)
 var iso_pan_strength: float = 1.0
 
@@ -42,6 +45,8 @@ var _target_position: Vector2
 var _target_zoom: Vector2
 
 var _isometric_mode: bool = false
+var _iso_quadrant_tween: Tween
+var _iso_quadrant_float: float = 0.0
 
 
 func _ready() -> void:
@@ -49,6 +54,7 @@ func _ready() -> void:
 
 	_target_position = position
 	_target_zoom = zoom
+	_iso_quadrant_float = float(iso_view_quadrant)
 
 
 func set_isometric_mode(
@@ -59,6 +65,47 @@ func set_isometric_mode(
 	_isometric_mode = enabled_iso
 	iso_projection_angle = projection_angle
 	iso_view_quadrant = posmod(view_quadrant, 4)
+	_iso_quadrant_float = float(iso_view_quadrant)
+
+
+func set_iso_view_quadrant(quadrant: int, animate: bool = true) -> void:
+	var target_quadrant: int = posmod(quadrant, 4)
+	var current_quadrant: int = posmod(iso_view_quadrant, 4)
+
+	if not animate or current_quadrant == target_quadrant:
+		iso_view_quadrant = target_quadrant
+		_iso_quadrant_float = float(target_quadrant)
+		return
+
+	if _iso_quadrant_tween != null and _iso_quadrant_tween.is_valid():
+		_iso_quadrant_tween.kill()
+
+	var current_angle: float = _iso_quadrant_float
+	var delta_quadrants: float = fposmod(
+		float(target_quadrant) - current_angle + 2.0,
+		4.0
+	) - 2.0
+	var resolved_target: float = current_angle + delta_quadrants
+
+	_iso_quadrant_tween = create_tween()
+	_iso_quadrant_tween.set_trans(Tween.TRANS_SINE)
+	_iso_quadrant_tween.set_ease(Tween.EASE_IN_OUT)
+	_iso_quadrant_tween.tween_property(
+		self,
+		"_iso_quadrant_float",
+		resolved_target,
+		maxf(iso_quadrant_turn_duration, 0.001)
+	)
+	_iso_quadrant_tween.finished.connect(
+		_finish_iso_quadrant_turn.bind(target_quadrant),
+		CONNECT_ONE_SHOT
+	)
+
+
+func _finish_iso_quadrant_turn(target_quadrant: int) -> void:
+	iso_view_quadrant = target_quadrant
+	_iso_quadrant_float = float(target_quadrant)
+
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -393,49 +440,21 @@ func _project_iso_delta(
 	)
 
 
-func _iso_rotation(
-	v: Vector2
-) -> Vector2:
-
-	match iso_view_quadrant:
-
-		1:
-			return Vector2(
-				-v.y,
-				v.x
-			)
-
-		2:
-			return -v
-
-		3:
-			return Vector2(
-				v.y,
-				-v.x
-			)
-
-	return v
+func _iso_rotation(v: Vector2) -> Vector2:
+	var angle_rad: float = _iso_quadrant_float * (PI * 0.5)
+	var c: float = cos(angle_rad)
+	var s: float = sin(angle_rad)
+	return Vector2(
+		v.x * c - v.y * s,
+		v.x * s + v.y * c
+	)
 
 
-func _inverse_iso_rotation(
-	v: Vector2
-) -> Vector2:
-
-	match iso_view_quadrant:
-
-		1:
-			return Vector2(
-				v.y,
-				-v.x
-			)
-
-		2:
-			return -v
-
-		3:
-			return Vector2(
-				-v.y,
-				v.x
-			)
-
-	return v
+func _inverse_iso_rotation(v: Vector2) -> Vector2:
+	var angle_rad: float = -_iso_quadrant_float * (PI * 0.5)
+	var c: float = cos(angle_rad)
+	var s: float = sin(angle_rad)
+	return Vector2(
+		v.x * c - v.y * s,
+		v.x * s + v.y * c
+	)

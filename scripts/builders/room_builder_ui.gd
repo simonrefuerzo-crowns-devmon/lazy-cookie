@@ -45,9 +45,14 @@ func build_general_context_menu() -> void:
 	ctx.context_menu.add_item("Wall Render", 10)
 	ctx.context_menu.add_item("Iso Wall Render", 11)
 	ctx.context_menu.add_separator()
-	ctx.context_menu.add_item("Iso1 - No Walls", 20)
-	ctx.context_menu.add_item("Iso2 - Back Walls", 21)
+	ctx.context_menu.add_item("Iso1 - No Walls (5 px)", 20)
+	ctx.context_menu.add_item("Iso2 - Half Walls (front 5 px)", 21)
 	ctx.context_menu.add_item("Iso3 - All Walls", 22)
+	ctx.context_menu.add_separator()
+	ctx.context_menu.add_item("Iso Quadrant 1", 40)
+	ctx.context_menu.add_item("Iso Quadrant 2", 41)
+	ctx.context_menu.add_item("Iso Quadrant 3", 42)
+	ctx.context_menu.add_item("Iso Quadrant 4", 43)
 	ctx.context_menu.id_pressed.connect(on_context_menu_id_pressed)
 	ctx.ui.add_child(ctx.context_menu)
 
@@ -179,6 +184,14 @@ func on_context_menu_id_pressed(id: int) -> void:
 			ctx.rendering.set_iso_view_mode(IsoWallRenderer.ViewMode.ISO2_BACK_WALLS)
 		22:
 			ctx.rendering.set_iso_view_mode(IsoWallRenderer.ViewMode.ISO3_ALL_WALLS)
+		40:
+			ctx.rendering.set_iso_view_quadrant(0)
+		41:
+			ctx.rendering.set_iso_view_quadrant(1)
+		42:
+			ctx.rendering.set_iso_view_quadrant(2)
+		43:
+			ctx.rendering.set_iso_view_quadrant(3)
 
 func update_context_menu_grid_item() -> void:
 	if ctx.context_menu == null:

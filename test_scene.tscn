@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://d4gne8mdh2a8i" path="res://scripts/renderers/room_renderer.gd" id="1_sasra"]
 [ext_resource type="Script" uid="uid://c5cpekbs6itee" path="res://scripts/builders/room_builder.gd" id="1_uhqqe"]
-[ext_resource type="Resource" uid="uid://d1o7u72mqirc0" path="res://assets/baked_tres/room_data/open_room_1.tres" id="2_coq8p"]
+[ext_resource type="Resource" uid="uid://dap8bossslshy" path="res://assets/baked_tres/room_data/one_room_house.tres" id="2_coq8p"]
 [ext_resource type="Script" uid="uid://jrrjqcxjtt62" path="res://scripts/builders/room_builder_camera.gd" id="2_ia1lp"]
 
 [node name="TestScene" type="Node2D" unique_id=1808339473]
@@ -18,11 +18,31 @@ floor_outline_darkness = 1.0
 [node name="Builder" type="Node2D" parent="." unique_id=1255052501]
 script = ExtResource("1_uhqqe")
 snap_size = 8.0
+grid_visible = null
 grid_size = 8.0
+grid_line_color = null
+grid_axis_color = null
 snap_radius = 16.0
+wall_hit_padding = null
+default_color = null
 default_thickness = 12.0
 default_line_width = 4.0
+default_start_cap = null
+default_end_cap = null
+default_floor_color = null
+floor_texture_tile_size = null
+ghost_alpha = null
+initial_render_mode = null
+iso_wall_height = null
+iso_projection_angle = null
+iso_view_quadrant = null
+iso_wall_cut_height = null
+iso_view_transition_duration = null
+iso_quadrant_turn_duration = null
 DEBUG_MODE = false
+debug_texture_directory = null
+debug_texture_tile_size = null
+renderer_switch_duration = null
 
 [node name="RoomBuilderCamera" type="Camera2D" parent="Builder" unique_id=568985036]
 script = ExtResource("2_ia1lp")

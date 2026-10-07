@@ -44,6 +44,14 @@ var floor_outline_darkness: float = 0.35
 @export var pixelate_floor_fills: bool = true
 @export var pixelate_floor_textures: bool = true
 
+@export_category("Baking")
+## Bake the pixel look into textures instead of redrawing every cell.
+@export var bake_pixel_art: bool = true
+## Draw cheap vector renders during smooth turns, then bake once settled.
+@export var vector_while_turning: bool = true
+@export_range(0.02, 1.0, 0.01)
+var view_settle_time: float = 0.12
+
 
 var _wall_renderer: WallRenderer
 var _floor_renderer: FloorRenderer
@@ -118,6 +126,9 @@ func _apply_renderer_settings() -> void:
 		pixel_renderer.line_darkness = line_darkness
 		pixel_renderer.counter_iso_textures = counter_iso_textures
 		pixel_renderer.pixelate_fills = pixelate_fills
+		pixel_renderer.bake_enabled = bake_pixel_art
+		pixel_renderer.vector_while_turning = vector_while_turning
+		pixel_renderer.view_settle_time = view_settle_time
 
 
 	if _floor_renderer == null:
@@ -133,6 +144,9 @@ func _apply_renderer_settings() -> void:
 		pixel_floor_renderer.outline_darkness = floor_outline_darkness
 		pixel_floor_renderer.pixelate_fills = pixelate_floor_fills
 		pixel_floor_renderer.pixelate_textures = pixelate_floor_textures
+		pixel_floor_renderer.bake_enabled = bake_pixel_art
+		pixel_floor_renderer.vector_while_turning = vector_while_turning
+		pixel_floor_renderer.view_settle_time = view_settle_time
 
 
 func _connect_room_data() -> void:
